@@ -8,25 +8,45 @@
       :root{
         --bg:#e6ffef;--card:#fff;--muted:#475569;--accent:#16a34a;--wrong:#ef4444
       }
+      *{box-sizing:border-box}
       body{font-family: 'Segoe UI', Roboto, Arial, sans-serif;background:var(--bg);margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-      .app{width:min(960px,98%);background:var(--card);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.08);padding:18px}
-      header{display:flex;align-items:center;justify-content:space-between}
+      .app{width:min(960px,100%);background:var(--card);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.08);padding:18px}
+      header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
       h1{margin:0;font-size:1.4rem;color:var(--accent)}
-      .controls{display:flex;gap:10px;align-items:center}
+      .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
       .score{font-weight:700;color:var(--muted)}
       .game-area{display:flex;gap:18px;margin-top:14px}
       .cards{flex:1;background:#f8fff8;border-radius:10px;padding:12px;min-height:220px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
-      .card{background:#fff;border:2px solid #e6f4ea;border-radius:8px;padding:8px 10px;cursor:grab;user-select:none}
+      .card{background:#fff;border:2px solid #e6f4ea;border-radius:8px;padding:8px 10px;cursor:grab;user-select:none;touch-action:manipulation;min-width:140px;flex:1 1 calc(50% - 8px)}
+      .card.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(22,163,74,.18)}
       .bins{width:320px;display:flex;flex-direction:column;gap:12px}
-      .bin{background:linear-gradient(180deg,#ffffff,#f1f8f3);border:2px dashed #cfead8;border-radius:10px;padding:14px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+      .bin{background:linear-gradient(180deg,#ffffff,#f1f8f3);border:2px dashed #cfead8;border-radius:10px;padding:14px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
       .bin.correct{border-color:var(--accent)}
       .bin.wrong{border-color:var(--wrong)}
       .bin h3{margin:0 0 6px 0}
       .meta{display:flex;gap:12px;align-items:center}
       .stars{color:#f59e0b;font-size:1.2rem}
-      .hint{color:var(--wrong);font-weight:700;margin-top:8px;min-height:20px}
-      .footer{margin-top:14px;display:flex;justify-content:space-between;align-items:center}
-      button{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+      .hint{color:var(--wrong);font-weight:700;margin-top:8px;min-height:24px}
+      .instructions{color:var(--muted);font-size:0.95rem;margin-top:6px}
+      .footer{margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+      button, select{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;min-height:44px;font-size:0.95rem}
+      select{background:#fff;color:#111827;border:1px solid #cbd5e1}
+      @media (max-width: 700px){
+        body{padding:12px;align-items:flex-start}
+        .app{padding:14px}
+        .game-area{flex-direction:column}
+        .bins{width:100%;flex-direction:row;flex-wrap:wrap}
+        .bin{flex:1 1 180px}
+        .cards{min-height:180px}
+        .card{flex:1 1 calc(50% - 6px);min-width:0}
+      }
+      @media (max-width: 480px){
+        h1{font-size:1.2rem}
+        .controls{width:100%}
+        .controls > *{width:100%}
+        .controls select, .controls button{width:100%}
+        .card{flex-basis:100%}
+      }
     </style>
   </head>
   <body>
@@ -71,6 +91,7 @@
       </main>
 
       <div class="hint" id="hint" aria-live="polite"></div>
+      <div class="instructions">On mobile: tap a card, then tap a bin.</div>
 
       <div class="footer">
         <div style="color:var(--muted)">Correct: <span id="correctCount">0</span> • Incorrect: <span id="incorrectCount">0</span></div>
@@ -107,13 +128,25 @@
       const incorrectEl = document.getElementById('incorrectCount');
       const levelInfoEl = document.getElementById('levelInfo');
 
-      let correct = 0; let incorrect = 0; let stars = 0;
+      let correct = 0; let incorrect = 0; let stars = 0; let selectedCardEl = null;
       // Timed mode state
       let timedRunning = false;
       let timerInterval = null;
       let timeLeft = 60; // default seconds for timed mode
 
       function shuffle(array){for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]]}return array}
+
+      function clearSelection(){
+        if(selectedCardEl){ selectedCardEl.classList.remove('selected'); selectedCardEl = null; }
+      }
+
+      function selectCard(cardEl){
+        if(selectedCardEl && selectedCardEl !== cardEl) selectedCardEl.classList.remove('selected');
+        selectedCardEl = cardEl;
+        cardEl.classList.add('selected');
+        hintEl.textContent = 'Selected. Now choose a bin.';
+        hintEl.style.color = 'var(--muted)';
+      }
 
       function getEmoji(text){
         const map = {
@@ -133,6 +166,7 @@
       }
 
       function renderCards(){
+        clearSelection();
         cardsEl.innerHTML='';
         const level = document.getElementById('levelSelect').value;
         const pool = shuffle([...allItems]);
@@ -162,27 +196,37 @@
           el.appendChild(t);
 
           el.addEventListener('dragstart', onDragStart);
+          el.addEventListener('click', onCardClick);
           cardsEl.appendChild(el);
         });
       }
 
+      function onCardClick(e){
+        e.preventDefault();
+        const card = e.currentTarget;
+        if(card.classList.contains('selected')){
+          clearSelection();
+          hintEl.textContent = '';
+          return;
+        }
+        selectCard(card);
+      }
+
       function onDragStart(e){
-        e.dataTransfer.setData('text/plain', e.target.dataset.idx);
+        const card = e.target.closest('.card');
+        if(!card) return;
+        e.dataTransfer.setData('text/plain', card.dataset.idx);
         e.dataTransfer.effectAllowed = 'move';
       }
 
       function onDragOverBin(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; }
 
-      function onDropBin(e){
-        e.preventDefault();
-        const idx = e.dataTransfer.getData('text/plain');
-        const card = document.querySelector(`.card[data-idx='${idx}']`);
+      function placeCardInBin(card, binEl){
         if(!card) return;
-        const chosenCat = e.currentTarget.dataset.category;
+        const chosenCat = binEl.dataset.category;
         const realCat = card.dataset.cat;
 
         if(chosenCat === realCat){
-          // correct
           correct += 1; stars += 1;
           card.remove();
           hintEl.textContent = '✅ Correct! Good detective work.';
@@ -190,15 +234,32 @@
           playCorrect();
         } else {
           incorrect += 1;
-          // keep the card but give a gentle hint
           hintEl.textContent = `❌ Not quite — "${card.textContent}" belongs to ${realCat === 'green' ? 'Green' : 'Non‑Green'}.`;
           hintEl.style.color = 'var(--wrong)';
           playWrong();
         }
 
         updateStats();
-        // brief animation feedback on bins
-        flashBin(e.currentTarget, chosenCat===realCat);
+        flashBin(binEl, chosenCat===realCat);
+      }
+
+      function onDropBin(e){
+        e.preventDefault();
+        const idx = e.dataTransfer.getData('text/plain');
+        const card = document.querySelector(`.card[data-idx='${idx}']`);
+        if(!card) return;
+        placeCardInBin(card, e.currentTarget);
+        clearSelection();
+      }
+
+      function onBinClick(e){
+        if(!selectedCardEl){
+          hintEl.textContent = 'Tap a card first, then tap a bin.';
+          hintEl.style.color = 'var(--wrong)';
+          return;
+        }
+        placeCardInBin(selectedCardEl, e.currentTarget);
+        clearSelection();
       }
 
       function flashBin(binEl, ok){
@@ -221,14 +282,17 @@
       [greenBinEl, nonGreenBinEl].forEach(bin => {
         bin.addEventListener('dragover', onDragOverBin);
         bin.addEventListener('drop', onDropBin);
+        bin.addEventListener('click', onBinClick);
       });
 
       document.getElementById('shuffleBtn').addEventListener('click', ()=>{ renderCards(); hintEl.textContent=''; correct=0; incorrect=0; stars=0; stopTimedMode(); updateStats(); });
       document.getElementById('resetBtn').addEventListener('click', ()=>{ renderCards(); hintEl.textContent=''; correct=0; incorrect=0; stars=0; stopTimedMode(); updateStats(); });
 
       // --- Sounds (Web Audio API simple tones) ---
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const audioCtx = typeof window.AudioContext !== 'undefined' ? new (window.AudioContext || window.webkitAudioContext)() : null;
+      function ensureAudio(){ if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{}); }
       function playTone(frequency=440,duration=0.12,volume=0.08){
+        if(!audioCtx) return;
         const o = audioCtx.createOscillator();
         const g = audioCtx.createGain();
         o.type = 'sine'; o.frequency.value = frequency;
@@ -237,9 +301,9 @@
         o.start();
         setTimeout(()=>{ o.stop(); }, duration*1000);
       }
-      function playCorrect(){ playTone(880,0.12,0.06); setTimeout(()=>playTone(1100,0.08,0.04),90); }
-      function playWrong(){ playTone(220,0.18,0.08); }
-      function playClick(){ playTone(660,0.06,0.04); }
+      function playCorrect(){ ensureAudio(); playTone(880,0.12,0.06); setTimeout(()=>playTone(1100,0.08,0.04),90); }
+      function playWrong(){ ensureAudio(); playTone(220,0.18,0.08); }
+      function playClick(){ ensureAudio(); playTone(660,0.06,0.04); }
 
       // Timed mode controls
       const startTimedBtn = document.getElementById('startTimedBtn');
@@ -262,7 +326,7 @@
 
       function startTimedMode(){
         if(timedRunning) return;
-        if(audioCtx.state === 'suspended') audioCtx.resume();
+        ensureAudio();
         timedRunning = true; timeLeft = 60; timeLeftEl.textContent = timeLeft;
         document.querySelectorAll('.card').forEach(c=>c.draggable = true);
         timerInterval = setInterval(()=>{
