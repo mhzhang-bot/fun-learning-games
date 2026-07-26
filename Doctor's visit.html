@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Visit Game - Advanced Version</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        #game-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 700px;
+            margin: 0 auto;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 { color: #00796b; margin-bottom: 5px; }
+        
+        /* Avatars Layout */
+        .character-stage {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        .character {
+            width: 100px;
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+        }
+        .character img {
+            width: 80px;
+            height: 80px;
+            background-color: #f1f8e9;
+            border-radius: 50%;
+            border: 3px solid #00796b;
+            margin-bottom: 5px;
+        }
+        
+        .level-indicator {
+            color: #ff9800;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        #score-board {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+        
+        /* Chat Bubble Display */
+        #dialogue-display {
+            font-size: 1.2em;
+            line-height: 1.4;
+            margin: 10px 0 20px 0;
+            padding: 20px;
+            background-color: #fff3e0;
+            border-radius: 15px;
+            border-bottom-left-radius: 0px;
+            position: relative;
+            text-align: left;
+            border: 2px solid #ffcc80;
+        }
+        
+        /* Level 1 & 3 Styles (Buttons) */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button.option-btn {
+            background-color: #4dd0e1;
+            border: none;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+            color: white;
+            text-align: left;
+        }
+        button.option-btn:hover { background-color: #00acc1; padding-left: 25px; }
+        button.option-btn:disabled { background-color: #b2ebf2; cursor: not-allowed; padding-left: 15px; }
+
+        /* Level 2 Styles (Fill in the blank) */
+        .fill-blank-container {
+            font-size: 1.5em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #00796b;
+        }
+        input.blank-input {
+            padding: 10px;
+            font-size: 1em;
+            width: 150px;
+            border: 3px solid #00acc1;
+            border-radius: 8px;
+            text-align: center;
+            font-family: inherit;
+        }
+        
+        button.action-btn {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        button.action-btn:hover { background-color: #f57c00; }
+
+        /* Feedback Box */
+        #feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: left;
+            display: none;
+        }
+        .correct { background-color: #c8e6c9; color: #2e7d32; border: 2px solid #4caf50; }
+        .wrong { background-color: #ffcdd2; color: #c62828; border: 2px solid #f44336; }
+        
+        .audio-btn {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        .audio-btn:hover { transform: scale(1.2); }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>🩺 Doctor's Visit Game</h1>
+        
+        <!-- Avatars Area -->
+        <div class="character-stage">
+            <div class="character">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=PatientBoy&backgroundColor=b6e3f4" alt="Patient">
+                <div>Patient</div>
+            </div>
+            <div id="score-board">Score: <span id="score">0</span></div>
+            <div class="character">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=DoctorSarah&style=circle&clothing=blazerAndShirt&accessories=prescription02&backgroundColor=c0aede" alt="Doctor">
+                <div>Doctor</div>
+            </div>
+        </div>
+
+        <div id="level-text" class="level-indicator">Level 1: Choose the correct illness</div>
+        
+        <div id="game-area">
+            <div id="dialogue-display">Loading...</div>
+            <div id="interactive-area"></div>
+        </div>
+
+        <div id="feedback-box"></div>
+        <button id="next-btn" class="action-btn" style="display:none;" onclick="nextQuestion()">Next Question ➔</button>
+    </div>
+
+    <script>
+        // Vocabulary Bank - 10 Challenging Questions
+        const questions = [
+            // --- LEVEL 1: PATIENT SYMPTOM MATCHING ---
+            { 
+                level: 1, promptRole: "Patient",
+                promptText: "My head hurts a lot! I can't concentrate on my homework and loud noises make it worse. 🤕", 
+                answer: "a headache", 
+                options: ["a stomachache", "a headache", "a cough", "an earache"], 
+                patientSentence: "I have a headache.", doctorAdvice: "You should rest in a quiet, dark room." 
+            },
+            { 
+                level: 1, promptRole: "Patient",
+                promptText: "It hurts a lot when I swallow food or drink water. My voice sounds very raspy and dry today. 🗣️", 
+                answer: "a sore throat", 
+                options: ["a cold", "a toothache", "an earache", "a sore throat"], 
+                patientSentence: "I have a sore throat.", doctorAdvice: "You should drink warm tea with honey." 
+            },
+            { 
+                level: 1, promptRole: "Patient",
+                promptText: "I lifted a very heavy box yesterday while helping my mom clean. Now I can't stand up straight! 📦", 
+                answer: "a backache", 
+                options: ["a backache", "a stomachache", "a fever", "a headache"], 
+                patientSentence: "I have a backache.", doctorAdvice: "You should put a warm towel on it and rest." 
+            },
+            { 
+                level: 1, promptRole: "Patient",
+                promptText: "My ear hurts so much I can't sleep at night. I think I got water in it when I was swimming. 👂", 
+                answer: "an earache", 
+                options: ["a cold", "a toothache", "an earache", "a sore throat"], 
+                patientSentence: "I have an earache.", doctorAdvice: "You should use these ear drops." 
+            },
+            
+            // --- LEVEL 2: FILL IN THE BLANK ---
+            { 
+                level: 2, promptRole: "Patient",
+                promptText: "I went to a birthday party and ate three pieces of cake, two hot dogs, and a lot of ice cream. Now my tummy feels terrible! 🤢", 
+                sentenceBefore: "I have a", sentenceAfter: ".",
+                answer: "stomachache", 
+                patientSentence: "I have a stomachache.", doctorAdvice: "You should take some medicine and not eat any more sweets today." 
+            },
+            { 
+                level: 2, promptRole: "Patient",
+                promptText: "I feel freezing cold, but my dad says my forehead is burning hot. My whole body aches and I feel very weak. 🥶🤒", 
+                sentenceBefore: "I have a", sentenceAfter: ".",
+                answer: "fever", 
+                patientSentence: "I have a fever.", doctorAdvice: "You should stay home from school and rest in bed." 
+            },
+            { 
+                level: 2, promptRole: "Patient",
+                promptText: "I can't stop making a loud noise from my throat, especially at night. It keeps me awake! *Hack hack!* 😮‍💨", 
+                sentenceBefore: "I have a", sentenceAfter: ".",
+                answer: "cough", 
+                patientSentence: "I have a cough.", doctorAdvice: "You should take some cough syrup before you sleep." 
+            },
+
+            // --- LEVEL 3: DOCTOR'S ADVICE ---
+            {
+                level: 3, promptRole: "Patient",
+                promptText: "Doctor, I fell off my bicycle yesterday. Now my arm is swollen, purple, and I can't move it at all! 🚲🦴",
+                answer: "You should go to the hospital and get an X-ray.",
+                options: [
+                    "You should put a small bandage on it.",
+                    "You should go to the hospital and get an X-ray.",
+                    "You should drink some warm tea."
+                ],
+                patientSentence: "I think I have a broken arm.", doctorAdvice: "You should go to the hospital and get an X-ray."
+            },
+            {
+                level: 3, promptRole: "Patient",
+                promptText: "Doctor, my tooth hurts with a sharp pain every time I eat ice cream or drink cold juice. 🦷",
+                answer: "You should go to the dentist to check your teeth.",
+                options: [
+                    "You should eat more candy.",
+                    "You should go to the dentist to check your teeth.",
+                    "You should go jogging in the park."
+                ],
+                patientSentence: "I have a terrible toothache.", doctorAdvice: "You should go to the dentist to check your teeth."
+            },
+            {
+                level: 3, promptRole: "Patient",
+                promptText: "Doctor, I was playing in the rain yesterday. Now I can't stop sneezing, and I need to blow my nose every five minutes. 🤧",
+                answer: "You should take some vitamin C and keep warm.",
+                options: [
+                    "You should take some vitamin C and keep warm.",
+                    "You should go swimming again.",
+                    "You should eat lots of fast food."
+                ],
+                patientSentence: "I have a bad cold and a runny nose.", doctorAdvice: "You should take some vitamin C and keep warm."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // --- Text-to-Speech Function ---
+        function speak(text, role) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            
+            if (role === "Doctor") {
+                utterance.pitch = 0.8;
+                utterance.rate = 0.9;
+            } else {
+                utterance.pitch = 1.3;
+                utterance.rate = 1.0;
+            }
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- Load the Question ---
+        function loadQuestion() {
+            document.getElementById("feedback-box").style.display = "none";
+            document.getElementById("next-btn").style.display = "none";
+            
+            const q = questions[currentQuestionIndex];
+            
+            // Set Level Text
+            const levelText = document.getElementById("level-text");
+            if (q.level === 1) levelText.innerText = "Level 1: Read the symptoms and choose the illness!";
+            if (q.level === 2) levelText.innerText = "Level 2: Read the story and type the missing word!";
+            if (q.level === 3) levelText.innerText = "Level 3: Listen to the patient. What should the doctor say?";
+
+            // Set Dialogue Prompt
+            const dialogue = document.getElementById("dialogue-display");
+            dialogue.innerHTML = `<strong>${q.promptRole} says:</strong><br>
+                                  "${q.promptText}" 
+                                  <button class="audio-btn" onclick="speak('${q.promptText}', '${q.promptRole}')" title="Listen">🔊</button>`;
+            
+            const interactiveArea = document.getElementById("interactive-area");
+            interactiveArea.innerHTML = ""; 
+
+            // Generate UI
+            if (q.level === 1 || q.level === 3) {
+                interactiveArea.className = "options-grid";
+                q.options.forEach(option => {
+                    const btn = document.createElement("button");
+                    btn.className = "option-btn";
+                    btn.innerText = option;
+                    btn.onclick = () => checkAnswer(option);
+                    interactiveArea.appendChild(btn);
+                });
+            } 
+            else if (q.level === 2) {
+                interactiveArea.className = "";
+                interactiveArea.innerHTML = `
+                    <div class="fill-blank-container">
+                        ${q.sentenceBefore} 
+                        <input type="text" id="blank-input" class="blank-input" placeholder="type here..." autocomplete="off"> 
+                        ${q.sentenceAfter}
+                    </div>
+                    <button class="action-btn" onclick="submitLevel2()">Check Answer</button>
+                `;
+                
+                document.getElementById("blank-input").addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") submitLevel2();
+                });
+                document.getElementById("blank-input").focus();
+            }
+        }
+
+        // --- Helper for Level 2 ---
+        function submitLevel2() {
+            const userInput = document.getElementById("blank-input").value;
+            checkAnswer(userInput);
+            document.getElementById("blank-input").disabled = true;
+            document.querySelector(".action-btn").disabled = true;
+        }
+
+        // --- Check Answer ---
+        function checkAnswer(userAnswer) {
+            const q = questions[currentQuestionIndex];
+            const feedbackBox = document.getElementById("feedback-box");
+
+            if (q.level === 1 || q.level === 3) {
+                const buttons = document.querySelectorAll(".option-btn");
+                buttons.forEach(btn => btn.disabled = true);
+            }
+
+            const cleanUserAnswer = userAnswer.trim().toLowerCase();
+            const cleanCorrectAnswer = q.answer.toLowerCase();
+
+            if (cleanUserAnswer === cleanCorrectAnswer) {
+                score += 10;
+                document.getElementById("score").innerText = score;
+                feedbackBox.className = "correct";
+                feedbackBox.innerHTML = `✅ <strong>Correct!</strong><br><br>
+                                         <strong>Patient:</strong> "${q.patientSentence}" <button class="audio-btn" onclick="speak('${q.patientSentence}', 'Patient')">🔊</button><br><br>
+                                         <strong>Doctor:</strong> "${q.doctorAdvice}" <button class="audio-btn" onclick="speak('${q.doctorAdvice}', 'Doctor')">🔊</button>`;
+                
+                speak(q.patientSentence, "Patient");
+                setTimeout(() => speak(q.doctorAdvice, "Doctor"), 2000); 
+                
+            } else {
+                feedbackBox.className = "wrong";
+                feedbackBox.innerHTML = `❌ <strong>Oops!</strong> The correct answer was <strong>${q.answer}</strong>.<br><br>
+                                         <strong>Patient:</strong> "${q.patientSentence}" <button class="audio-btn" onclick="speak('${q.patientSentence}', 'Patient')">🔊</button><br><br>
+                                         <strong>Doctor:</strong> "${q.doctorAdvice}" <button class="audio-btn" onclick="speak('${q.doctorAdvice}', 'Doctor')">🔊</button>`;
+            }
+
+            feedbackBox.style.display = "block";
+            document.getElementById("next-btn").style.display = "inline-block";
+        }
+
+        // --- Next Question ---
+        function nextQuestion() {
+            window.speechSynthesis.cancel(); 
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                document.getElementById("level-text").innerText = "Game Complete!";
+                document.getElementById("game-area").innerHTML = `<h2>Great Job! 🎉</h2>
+                                                                  <p>Your final score is <strong>${score}</strong> out of ${questions.length * 10}.</p>`;
+                document.getElementById("feedback-box").style.display = "none";
+                
+                const nextBtn = document.getElementById("next-btn");
+                nextBtn.innerText = "Play Again 🔄";
+                nextBtn.onclick = () => location.reload();
+            }
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
