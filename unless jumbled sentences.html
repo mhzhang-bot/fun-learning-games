@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jumbled Sentences Game - Unless</title>
+  <style>
+    :root {
+      --bg: #f4fbf7;
+      --card: #ffffff;
+      --accent: #2e8b57;
+      --accent2: #4f46e5;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --word: #eaf7ef;
+      --word2: #eef2ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f4fbf7 0%, #eef7ff 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app {
+      width: min(760px, 100%);
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 1.6rem;
+      text-align: center;
+    }
+
+    .intro {
+      margin: 0 0 16px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .image-card {
+      background: #f8fff9;
+      border: 2px solid #dcefe1;
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .image-card img {
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .panel {
+      border: 1px solid #dfe7e2;
+      border-radius: 14px;
+      padding: 14px;
+      background: #fcfffd;
+    }
+
+    .answer-area {
+      min-height: 74px;
+      border: 2px dashed #b7d8c2;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-start;
+      background: #f8fff9;
+    }
+
+    .answer-area .placeholder {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .word {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      user-select: none;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+
+    .word-bank .word {
+      background: var(--word);
+      color: var(--accent);
+      border: 1px solid #cde9d7;
+    }
+
+    .answer-area .word {
+      background: var(--accent);
+      color: white;
+      border: 1px solid var(--accent);
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 44px;
+      color: white;
+      background: var(--accent2);
+    }
+
+    button.secondary {
+      background: #6b7280;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      min-height: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .feedback.wrong {
+      color: #b91c1c;
+    }
+
+    @media (max-width: 600px) {
+      .app { padding: 14px; }
+      h1 { font-size: 1.35rem; }
+      .word { padding: 9px 11px; }
+      .controls { flex-direction: column; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>🧩 Jumbled Sentences Game</h1>
+    <p class="intro">Tap the words to build a correct sentence using <strong>unless</strong>. You can also tap a chosen word again to move it back.</p>
+
+    <div class="image-card" id="imageCard"></div>
+
+    <div class="panel">
+      <div class="answer-area" id="answerArea">
+        <span class="placeholder">Your sentence will appear here.</span>
+      </div>
+
+      <div class="word-bank" id="wordBank"></div>
+
+      <div class="controls">
+        <button id="checkBtn">Check Answer</button>
+        <button id="nextBtn" class="secondary">Next Picture</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        sentence: 'You will harm the Earth unless you change your habits',
+        theme: 'earth'
+      },
+      {
+        sentence: 'Animals and plants will die soon unless you look after the environment',
+        theme: 'environment'
+      },
+      {
+        sentence: 'Most wild animals will not attack unless they are provoked',
+        theme: 'animals'
+      },
+      {
+        sentence: 'We will lose the forest unless we protect it',
+        theme: 'forest'
+      },
+      {
+        sentence: 'The river will become dirty unless people stop throwing rubbish into it',
+        theme: 'environment'
+      },
+      {
+        sentence: 'Many birds will lose their homes unless we save the trees',
+        theme: 'forest'
+      },
+      {
+        sentence: 'The planet will suffer unless we use less plastic',
+        theme: 'earth'
+      },
+      {
+        sentence: 'Our air will be unhealthy unless we reduce pollution',
+        theme: 'environment'
+      },
+      {
+        sentence: 'Polar bears will lose their homes unless the ice does not melt',
+        theme: 'environment'
+      },
+      {
+        sentence: 'Sea turtles will die unless we stop throwing plastic into the ocean',
+        theme: 'environment'
+      },
+      {
+        sentence: 'Elephants will lose their habitats unless people protect the forests',
+        theme: 'forest'
+      },
+      {
+        sentence: 'Leopards will disappear unless we keep their forests safe',
+        theme: 'forest'
+      }
+    ];
+
+    let currentIndex = 0;
+    let bankWords = [];
+    let answerWords = [];
+
+    const imageCard = document.getElementById('imageCard');
+    const answerArea = document.getElementById('answerArea');
+    const wordBank = document.getElementById('wordBank');
+    const feedback = document.getElementById('feedback');
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function makeImage(theme) {
+      const svg = {
+        earth: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220'><rect width='320' height='220' rx='24' fill='#f3fff7'/><circle cx='160' cy='110' r='70' fill='#5bc97a'/><path d='M95 120c12-26 31-43 65-43 28 0 52 15 64 45-14 11-30 17-50 17-23 0-43-7-59-19z' fill='#2e8b57'/><path d='M115 95c8-27 26-42 48-42 25 0 44 16 55 43-19-10-37-13-55-13-18 0-35 3-48 12z' fill='#4db46c'/><path d='M118 138c13 15 31 25 53 25 24 0 44-10 59-29-14 24-38 37-63 37-18 0-35-7-49-33z' fill='#7cd28f'/></svg>`,
+        environment: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220'><rect width='320' height='220' rx='24' fill='#f5fbff'/><rect x='55' y='110' width='210' height='70' rx='12' fill='#7dbb5b'/><path d='M86 113c0-24 18-44 42-44 20 0 37 12 41 30 14-4 24-4 37 1 14 5 24 15 31 28H86z' fill='#4f8f3b'/><path d='M94 147c18 15 37 24 56 24 22 0 44-10 64-30' stroke='#2e8b57' stroke-width='8' fill='none' stroke-linecap='round'/><circle cx='100' cy='78' r='12' fill='#f4c542'/></svg>`,
+        animals: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220'><rect width='320' height='220' rx='24' fill='#fff9f0'/><circle cx='160' cy='110' r='58' fill='#f4b183'/><circle cx='139' cy='104' r='7' fill='#1f2937'/><circle cx='181' cy='104' r='7' fill='#1f2937'/><path d='M138 132c11 11 31 11 42 0' stroke='#8a4b18' stroke-width='7' fill='none' stroke-linecap='round'/><path d='M95 95c-18-17-32-31-42-50' stroke='#6b7280' stroke-width='10' fill='none' stroke-linecap='round'/><path d='M225 95c18-17 32-31 42-50' stroke='#6b7280' stroke-width='10' fill='none' stroke-linecap='round'/></svg>`,
+        forest: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220'><rect width='320' height='220' rx='24' fill='#f3fff3'/><path d='M95 170l35-54 25 33 25-43 25 49 25-31v44H95z' fill='#2e8b57'/><path d='M98 123l28-46 18 28 20-35 20 35 24-31 22 35' stroke='#3d7a42' stroke-width='10' fill='none' stroke-linecap='round' stroke-linejoin='round'/><rect x='138' y='170' width='20' height='16' rx='3' fill='#6d4c41'/></svg>`,
+        polar: `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220'><rect width='320' height='220' rx='24' fill='#f6fbff'/><rect x='0' y='170' width='320' height='50' fill='#dceef9'/><path d='M70 150c12-48 41-78 90-78 49 0 78 30 90 78H70z' fill='#ffffff'/><path d='M104 88c8-21 23-34 47-34 24 0 39 12 49 34' stroke='#1f2937' stroke-width='10' fill='none' stroke-linecap='round'/><circle cx='125' cy='109' r='6' fill='#1f2937'/><circle cx='174' cy='109' r='6' fill='#1f2937'/><path d='M135 126c10 10 27 10 37 0' stroke='#8a4b18' stroke-width='7' fill='none' stroke-linecap='round'/><path d='M95 156c25 16 58 24 95 24 38 0 72-8 97-24' stroke='#3b82f6' stroke-width='8' fill='none' stroke-linecap='round'/><path d='M84 148c-12 11-21 25-21 41' stroke='#8ec5ff' stroke-width='8' fill='none' stroke-linecap='round'/></svg>`
+      };
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg[theme] || svg.earth)}`;
+    }
+
+    function renderQuestion() {
+      const question = questions[currentIndex];
+      imageCard.innerHTML = `<img src="${makeImage(question.theme)}" alt="Picture for the sentence" />`;
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      bankWords = shuffle(question.sentence.split(' '));
+      answerWords = [];
+      renderBoard();
+    }
+
+    function renderBoard() {
+      answerArea.innerHTML = '';
+      if (answerWords.length === 0) {
+        answerArea.innerHTML = '<span class="placeholder">Tap the words to build your sentence.</span>';
+      } else {
+        answerWords.forEach((word) => {
+          const btn = document.createElement('button');
+          btn.className = 'word';
+          btn.textContent = word;
+          btn.addEventListener('click', () => moveBack(word));
+          answerArea.appendChild(btn);
+        });
+      }
+
+      wordBank.innerHTML = '';
+      bankWords.forEach((word) => {
+        const btn = document.createElement('button');
+        btn.className = 'word';
+        btn.textContent = word;
+        btn.addEventListener('click', () => moveToAnswer(word));
+        wordBank.appendChild(btn);
+      });
+    }
+
+    function moveToAnswer(word) {
+      const index = bankWords.indexOf(word);
+      if (index === -1) return;
+      bankWords.splice(index, 1);
+      answerWords.push(word);
+      renderBoard();
+    }
+
+    function moveBack(word) {
+      const index = answerWords.indexOf(word);
+      if (index === -1) return;
+      answerWords.splice(index, 1);
+      bankWords.push(word);
+      renderBoard();
+    }
+
+    function checkAnswer() {
+      const question = questions[currentIndex];
+      const userSentence = answerWords.join(' ');
+      if (userSentence === question.sentence) {
+        feedback.textContent = '✅ Correct! Great job.';
+        feedback.className = 'feedback';
+      } else {
+        feedback.textContent = `❌ Not quite. The correct sentence is: ${question.sentence}`;
+        feedback.className = 'feedback wrong';
+      }
+    }
+
+    document.getElementById('checkBtn').addEventListener('click', checkAnswer);
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % questions.length;
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
