@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Endangered Animals Riddle Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      text-align: center;
+      font-size: 20px;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { color: #2e8b57; font-size: 36px; }
+    .quiz-card {
+      max-width: 760px;
+      margin: 24px auto;
+      padding: 24px;
+      border: 3px solid #4682b4;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .progress { color: #4b5563; font-size: 16px; margin-bottom: 10px; }
+    .question { font-weight: bold; margin: 15px 0; font-size: 22px; }
+    .read-btn {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      font-size: 16px;
+      background: #4682b4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .read-btn:hover { background: #3b6f9b; }
+    .options { display: grid; gap: 10px; margin: 16px 0; }
+    .option-btn {
+      padding: 12px 14px;
+      font-size: 18px;
+      background: #eaf6ef;
+      color: #1f2937;
+      border: 2px solid #2e8b57;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .option-btn:hover { background: #d8f0e2; }
+    .feedback { margin-top: 12px; font-weight: bold; min-height: 24px; }
+    .feedback.correct { color: green; }
+    .feedback.wrong { color: red; }
+    .animal-image {
+      display: none;
+      width: 280px;
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin: 15px auto;
+      border: 2px solid #d1d5db;
+    }
+    .fact-box {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: #f5f9ff;
+      border-left: 4px solid #4682b4;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 16px;
+      color: #1f2937;
+    }
+    .next-btn {
+      margin-top: 12px;
+      padding: 10px 16px;
+      font-size: 18px;
+      background: #2e8b57;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+    .next-btn:hover { background: #4682b4; }
+    .restart-btn {
+      margin-top: 12px;
+      padding: 10px 16px;
+      font-size: 18px;
+      background: #ff7f50;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+    .restart-btn:hover { background: #e76f3c; }
+  </style>
+</head>
+<body>
+  <h1>🧩 Endangered Animals Riddle Game</h1>
+  <p>Read the riddle, choose the correct answer, and reveal the picture only after you get it right.</p>
+
+  <div class="quiz-card">
+    <p id="progress" class="progress"></p>
+    <p id="questionText" class="question"></p>
+    <button class="read-btn" onclick="speakCurrentRiddle()">🔊 Read Aloud</button>
+    <div id="options" class="options"></div>
+    <p id="feedback" class="feedback"></p>
+    <img id="animalImage" class="animal-image" alt="Animal picture">
+    <div id="factBox" class="fact-box"></div>
+    <button id="answerReadBtn" class="read-btn" onclick="speakAnswer()" style="display:none;">🔊 Read Answer</button>
+    <button id="nextBtn" class="next-btn" onclick="nextQuestion()">Next Question</button>
+    <button id="restartBtn" class="restart-btn" onclick="startAgain()">Start Again</button>
+  </div>
+
+  <script>
+    const quiz = [
+      {
+        animal: 'Asian Elephant',
+        question: 'I am big and grey, with a trunk so long. I live in Asia, but my numbers are not strong. Who am I?',
+        options: ['Asian Elephant', 'Hippopotamus', 'Giraffe', 'Rhinoceros'],
+        correct: 'Asian Elephant',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Asian_elephant_walking_in_Tad_Lo_river_at_golden_hour%2C_Bolaven_Plateau%2C_Laos.jpg/500px-Asian_elephant_walking_in_Tad_Lo_river_at_golden_hour%2C_Bolaven_Plateau%2C_Laos.jpg',
+        fact: 'Asian elephants are very smart and use their trunks to drink, pick up food, and greet other elephants.'
+      },
+      {
+        animal: 'Polar Bear',
+        question: 'I am white and furry, I live on ice. Climate change makes my home not so nice. Who am I?',
+        options: ['Brown Bear', 'Polar Bear', 'Arctic Fox', 'Seal'],
+        correct: 'Polar Bear',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Cub_polar_bear_is_nursing_2.ogv/330px--Cub_polar_bear_is_nursing_2.ogv.jpg',
+        fact: 'Polar bears have thick fur and fat to stay warm in the icy Arctic.'
+      },
+      {
+        animal: 'Sea Turtle',
+        question: 'I swim in the ocean, slow but strong. Plastic hurts me, it’s very wrong. Who am I?',
+        options: ['Sea Turtle', 'Crocodile', 'Dolphin', 'Shark'],
+        correct: 'Sea Turtle',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Chelonia_mydas_albino_p1440273.jpg/500px-Chelonia_mydas_albino_p1440273.jpg',
+        fact: 'Sea turtles travel huge distances in the ocean and often return to the same beach to lay eggs.'
+      },
+      {
+        animal: 'Cheetah',
+        question: 'I am the fastest runner on land. But I need space, not fences or sand. Who am I?',
+        options: ['Lion', 'Leopard', 'Cheetah', 'Wolf'],
+        correct: 'Cheetah',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/003_Cheetah_hissing_after_a_meal_in_Kalahari_Desert_Photo_by_Giles_Laurent.jpg/500px-003_Cheetah_hissing_after_a_meal_in_Kalahari_Desert_Photo_by_Giles_Laurent.jpg',
+        fact: 'Cheetahs are the fastest land animals and can run very quickly for short distances.'
+      },
+      {
+        animal: 'Orangutan',
+        question: 'I live in the rainforests of Borneo and Sumatra and I am very clever. Which animal am I?',
+        options: ['Orangutan', 'Chimpanzee', 'Gorilla', 'Monkey'],
+        correct: 'Orangutan',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Anak_Orangutan_Menyusu_Induknya.jpg/500px-Anak_Orangutan_Menyusu_Induknya.jpg',
+        fact: 'Orangutans are great climbers and spend much of their lives high in the trees.'
+      },
+      {
+        animal: 'Blue Whale',
+        question: 'I am the largest animal on Earth and I sing underwater. What am I?',
+        options: ['Blue Whale', 'Dolphin', 'Shark', 'Walrus'],
+        correct: 'Blue Whale',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/202501_Blue_whale.svg/500px-202501_Blue_whale.svg.png',
+        fact: 'Blue whales are the largest animals ever known to live on Earth.'
+      },
+      {
+        animal: 'Snow Leopard',
+        question: 'I live in high mountains and have thick fur with spots. What am I?',
+        options: ['Leopard', 'Snow Leopard', 'Tiger', 'Fox'],
+        correct: 'Snow Leopard',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Snow-Leopard_Uncia-uncia.jpg/500px-Snow-Leopard_Uncia-uncia.jpg',
+        fact: 'Snow leopards live in snowy mountains and have thick fur to keep them warm.'
+      },
+      {
+        animal: 'Giant Panda',
+        question: 'I eat bamboo and live in the forests of China. What am I?',
+        options: ['Red Panda', 'Koala', 'Giant Panda', 'Bear Cub'],
+        correct: 'Giant Panda',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Ailuropoda_melanoleuca_%28Panda_g%C3%A9ant%29_-_445.jpg/500px-Ailuropoda_melanoleuca_%28Panda_g%C3%A9ant%29_-_445.jpg',
+        fact: 'Giant pandas spend a lot of time eating bamboo and are native to China.'
+      }
+    ];
+
+    let currentIndex = 0;
+    let answeredCorrectly = false;
+
+    const progress = document.getElementById('progress');
+    const questionText = document.getElementById('questionText');
+    const options = document.getElementById('options');
+    const feedback = document.getElementById('feedback');
+    const animalImage = document.getElementById('animalImage');
+    const factBox = document.getElementById('factBox');
+    const answerReadBtn = document.getElementById('answerReadBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    function speakCurrentRiddle() {
+      const item = quiz[currentIndex];
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(item.question);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert('Your browser does not support read-aloud.');
+      }
+    }
+
+    function speakAnswer() {
+      const item = quiz[currentIndex];
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const textToSpeak = `${item.correct}. ${item.fact}`;
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert('Your browser does not support read-aloud.');
+      }
+    }
+
+    function renderQuestion() {
+      const item = quiz[currentIndex];
+      progress.textContent = `Question ${currentIndex + 1} of ${quiz.length}`;
+      questionText.textContent = item.question;
+      options.innerHTML = '';
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      animalImage.style.display = 'none';
+      factBox.style.display = 'none';
+      factBox.textContent = '';
+      animalImage.src = item.image;
+      animalImage.alt = item.animal;
+      answerReadBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      restartBtn.style.display = 'none';
+      answeredCorrectly = false;
+
+      item.options.forEach((option) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.textContent = option;
+        button.onclick = () => checkAnswer(option);
+        options.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedAnswer) {
+      if (answeredCorrectly) return;
+      const item = quiz[currentIndex];
+
+      if (selectedAnswer === item.correct) {
+        feedback.textContent = `✅ Correct! It is the ${item.correct}.`;
+        feedback.className = 'feedback correct';
+        animalImage.style.display = 'block';
+        factBox.textContent = `Fun fact: ${item.fact}`;
+        factBox.style.display = 'block';
+        answerReadBtn.style.display = 'inline-block';
+        nextBtn.style.display = 'inline-block';
+        answeredCorrectly = true;
+      } else {
+        feedback.textContent = '❌ Try again!';
+        feedback.className = 'feedback wrong';
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < quiz.length - 1) {
+        currentIndex += 1;
+        renderQuestion();
+      } else {
+        progress.textContent = 'Finished';
+        questionText.textContent = 'You completed all the animal riddles!';
+        options.innerHTML = '';
+        feedback.textContent = '🎉 Great job!';
+        feedback.className = 'feedback correct';
+        animalImage.style.display = 'none';
+        answerReadBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        restartBtn.style.display = 'inline-block';
+      }
+    }
+
+    function startAgain() {
+      currentIndex = 0;
+      renderQuestion();
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
