@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Passive Voice Sentence Game</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f0f8ff; 
+      font-size: 20px; 
+      display: flex; 
+      justify-content: space-between; 
+      padding: 20px;
+    }
+    .game-area { 
+      width: 65%; 
+      text-align: center; 
+    }
+    h1 { color: #2e8b57; font-size: 36px; }
+    .card { font-size: 24px; font-weight: bold; margin: 15px; color: #4682b4; }
+    .emoji { font-size: 40px; margin: 10px; }
+    img { width: 120px; height: auto; margin: 10px; border-radius: 8px; }
+    button { 
+      padding: 12px 20px; 
+      font-size: 18px; 
+      margin: 10px; 
+      background: #2e8b57; 
+      color: #fff; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+    }
+    button:hover { background: #4682b4; }
+    input { padding: 10px; font-size: 18px; width: 60%; margin-top: 15px; }
+    .result { margin-top: 15px; font-weight: bold; }
+    .rule-box { 
+      width: 30%; 
+      background: #fff8dc; 
+      border: 2px solid #4682b4; 
+      border-radius: 10px; 
+      padding: 15px; 
+      font-size: 18px; 
+      line-height: 1.6; 
+    }
+    .rule-box h2 { color: #2e8b57; font-size: 24px; }
+  </style>
+</head>
+<body>
+  <div class="game-area">
+    <h1>📝 Passive Voice Sentence Game</h1>
+    <p>Click the button to draw one verb, one noun, and one extra detail card. Make a passive voice sentence in the present or past tense!</p>
+
+    <button onclick="drawCards()">🎲 Draw Cards</button>
+    <div id="verbCard" class="card"></div>
+    <div id="nounCard" class="card"></div>
+    <div id="detailCard" class="card"></div>
+    <div id="emojiDisplay" class="emoji"></div>
+    <div id="imageDisplay"></div>
+
+    <input type="text" id="sentenceInput" placeholder="Type your passive sentence here">
+    <button onclick="checkSentence()">Check Sentence</button>
+    <p id="feedback" class="result"></p>
+  </div>
+
+  <!-- Grammar Rule Reminder -->
+  <div class="rule-box">
+    <h2>📖 Passive Voice Rule</h2>
+    <p><b>Structure:</b> Subject + be (is/was/were) + Past Participle (+ by ...)</p>
+    <p>Examples:</p>
+    <ul>
+      <li>The cake <b>is eaten</b>. 🎂</li>
+      <li>The girl <b>was taught</b> by teachers. 👧👩‍🏫</li>
+      <li>The smartphone <b>was stolen</b>. 📱</li>
+    </ul>
+    <p>✨ Remember: Use the correct tense of <b>be</b> and the past participle of the verb.</p>
+    <p>💡 You can use <b>is/are</b> for present or <b>was/were</b> for past.</p>
+  </div>
+
+  <script>
+    const verbSets = [
+      ["eat", "find"],
+      ["follow", "give"],
+      ["keep", "leave"],
+      ["move", "offer"],
+      ["steal", "take"],
+      ["teach", "throw"]
+    ];
+    const nounSets = [
+      ["voice", "cake"],
+      ["frog", "girl"],
+      ["hunter", "zookeeper"],
+      ["jewelry", "presents"],
+      ["shark", "smartphone"],
+      ["teachers", "tiger"]
+    ];
+    const detailSets = [
+      ["by teachers", "by a hunter"],
+      ["by a zookeeper", "in the kitchen"],
+      ["in the garden", "at school"],
+      ["in the forest", "at home"],
+      ["in the park", "on the beach"],
+      ["in the classroom", "by the river"]
+    ];
+
+    const emojis = {
+      cake: "🎂", frog: "🐸", girl: "👧", hunter: "🏹", zookeeper: "🦓", jewelry: "💍", presents: "🎁", shark: "🦈", smartphone: "📱", teachers: "👩‍🏫", tiger: "🐯", voice: "🎤"
+    };
+
+    const images = {
+      cake: "https://upload.wikimedia.org/wikipedia/commons/0/04/Cake.jpg",
+      frog: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Frog_on_leaf.jpg",
+      girl: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Young_girl.jpg",
+      hunter: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Hunter_with_bow.jpg",
+      zookeeper: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Zookeeper_feeding_zebra.jpg",
+      jewelry: "https://upload.wikimedia.org/wikipedia/commons/0/0c/Jewelry_display.jpg",
+      presents: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Christmas_presents.jpg",
+      shark: "https://upload.wikimedia.org/wikipedia/commons/5/56/Shark_swimming.jpg",
+      smartphone: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Smartphone.jpg",
+      teachers: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Teacher_in_class.jpg",
+      tiger: "https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger_in_forest.jpg",
+      voice: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Microphone.jpg"
+    };
+
+    let currentVerb = "";
+    let currentNoun = "";
+    let currentDetail = "";
+
+    const irregularParticiples = {
+      eat: "eaten",
+      find: "found",
+      follow: "followed",
+      give: "given",
+      keep: "kept",
+      leave: "left",
+      move: "moved",
+      offer: "offered",
+      steal: "stolen",
+      take: "taken",
+      teach: "taught",
+      throw: "thrown"
+    };
+
+    const allowedNounsByVerb = {
+      eat: ["cake", "frog"],
+      find: ["jewelry", "smartphone", "presents", "girl", "voice", "tiger", "shark", "hunter", "zookeeper", "cake", "frog"],
+      follow: ["girl", "hunter", "zookeeper", "teachers", "tiger", "shark", "voice"],
+      give: ["presents", "jewelry", "girl", "teachers", "voice"],
+      keep: ["jewelry", "presents", "voice", "smartphone"],
+      leave: ["girl", "hunter", "zookeeper", "teachers", "tiger", "shark", "voice"],
+      move: ["girl", "hunter", "zookeeper", "teachers", "tiger", "shark", "voice", "smartphone"],
+      offer: ["presents", "jewelry", "voice", "cake", "frog"],
+      steal: ["smartphone", "jewelry", "presents"],
+      take: ["presents", "jewelry", "smartphone", "voice", "cake", "frog"],
+      teach: ["girl"],
+      throw: ["frog", "cake", "presents", "jewelry", "smartphone", "voice"]
+    };
+
+    function getPastParticiple(verb) {
+      return irregularParticiples[verb] || verb + "ed";
+    }
+
+    function normalizeSentence(text) {
+      return text.toLowerCase().replace(/[.,!?;]/g, "").trim();
+    }
+
+    function isPluralNoun(noun) {
+      return noun === "teachers" || noun === "presents" || noun.endsWith("s");
+    }
+
+    function buildModelAnswer(participle) {
+      const exampleNoun = currentNoun;
+      const presentBe = isPluralNoun(exampleNoun) ? "are" : "is";
+      const pastBe = isPluralNoun(exampleNoun) ? "were" : "was";
+      const detailText = currentDetail;
+      const detailPhrase = detailText.startsWith("by") ? ` ${detailText}` : ` ${detailText}`;
+      return `A correct answer could be: The ${exampleNoun} ${presentBe} ${participle}${detailPhrase}. You could also say: The ${exampleNoun} ${pastBe} ${participle}${detailPhrase}.`;
+    }
+
+    function drawCards() {
+      const verbSet = verbSets[Math.floor(Math.random() * verbSets.length)];
+      const nounSet = nounSets[Math.floor(Math.random() * nounSets.length)];
+      const detailSet = detailSets[Math.floor(Math.random() * detailSets.length)];
+      currentVerb = verbSet[Math.floor(Math.random() * verbSet.length)];
+      currentNoun = nounSet[Math.floor(Math.random() * nounSet.length)];
+      currentDetail = detailSet[Math.floor(Math.random() * detailSet.length)];
+      document.getElementById("verbCard").textContent = "Verb: " + currentVerb;
+      document.getElementById("nounCard").textContent = "Noun: " + currentNoun;
+      document.getElementById("detailCard").textContent = "Detail: " + currentDetail;
+
+      // Show emoji
+      document.getElementById("emojiDisplay").textContent = emojis[currentNoun] || "";
+
+      // Show image
+      const imgDiv = document.getElementById("imageDisplay");
+      imgDiv.innerHTML = "";
+      if (images[currentNoun]) {
+        const img = document.createElement("img");
+        img.src = images[currentNoun];
+        img.alt = currentNoun;
+        imgDiv.appendChild(img);
+      }
+
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("sentenceInput").value = "";
+    }
+
+    function checkSentence() {
+      const sentence = normalizeSentence(document.getElementById("sentenceInput").value);
+      const feedback = document.getElementById("feedback");
+      const participle = getPastParticiple(currentVerb);
+      const hasParticiple = sentence.includes(participle);
+      const hasPresentBe = /\b(is|are)\b/.test(sentence);
+      const hasPastBe = /\b(was|were)\b/.test(sentence);
+      const hasPassiveStructure = (hasPresentBe || hasPastBe) && hasParticiple;
+
+      const correct = hasPassiveStructure;
+
+      if (correct) {
+        feedback.textContent = "✅ Great! That looks like a passive sentence in a correct tense.";
+        feedback.style.color = "green";
+      } else {
+        feedback.textContent = `❌ Not quite. ${buildModelAnswer(participle)}`;
+        feedback.style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>
