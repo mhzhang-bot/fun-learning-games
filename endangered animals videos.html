@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Endangered Animals Video Activities</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f8ff; text-align: center; margin: 0; padding: 20px; }
+    h1 { color: #2e8b57; }
+    .video-section { margin: 24px auto; padding: 20px; border: 2px solid #4682b4; border-radius: 12px; background: #fff; max-width: 860px; }
+    h2 { color: #4682b4; }
+    .video-preview { display: inline-block; margin-top: 10px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    .video-thumb { display: block; width: 100%; max-width: 720px; height: auto; }
+    .watch-btn { display: inline-block; margin: 12px 0 8px; padding: 10px 16px; background: #2e8b57; color: white; text-decoration: none; border-radius: 999px; font-weight: bold; }
+    .watch-btn:hover { background: #256d46; }
+    .question-box { display: block; background: #fff8dc; border: 2px solid #2e8b57; padding: 15px; margin: 18px auto; width: min(90%, 640px); border-radius: 8px; text-align: left; }
+    .question-box p { font-weight: bold; margin: 0 0 10px; }
+    .question-box ul { margin: 0; padding-left: 20px; }
+    .question-box li { margin: 6px 0; }
+    .note { color: #4b5563; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <h1>🎥 Endangered Animals Video Activities</h1>
+  <p class="note">Each video plays directly in the page. Use the button below each video to open its question.</p>
+
+  <div class="video-section">
+    <h2>Asian Elephants</h2>
+    <a class="video-preview" href="https://www.youtube.com/watch?v=9DGP70o9INU" target="_blank" rel="noopener noreferrer">
+      <img class="video-thumb" src="https://img.youtube.com/vi/9DGP70o9INU/hqdefault.jpg" alt="Asian Elephants video thumbnail" loading="lazy">
+    </a>
+    <br>
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=9DGP70o9INU" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+    <div id="elephantQuestions" class="question-box">
+      <p>Questions</p>
+      <ul id="elephantQ"></ul>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2>Polar Bears</h2>
+    <a class="video-preview" href="https://www.youtube.com/watch?v=1zRGzlWqce4" target="_blank" rel="noopener noreferrer">
+      <img class="video-thumb" src="https://img.youtube.com/vi/1zRGzlWqce4/hqdefault.jpg" alt="Polar Bears video thumbnail" loading="lazy">
+    </a>
+    <br>
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=1zRGzlWqce4" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+    <div id="polarQuestions" class="question-box">
+      <p>Questions</p>
+      <ul id="polarQ"></ul>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2>Sea Turtles</h2>
+    <a class="video-preview" href="https://www.youtube.com/watch?v=5Rmv3nliwCs" target="_blank" rel="noopener noreferrer">
+      <img class="video-thumb" src="https://img.youtube.com/vi/5Rmv3nliwCs/hqdefault.jpg" alt="Sea Turtles video thumbnail" loading="lazy">
+    </a>
+    <br>
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=5Rmv3nliwCs" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+    <div id="turtleQuestions" class="question-box">
+      <p>Questions</p>
+      <ul id="turtleQ"></ul>
+    </div>
+  </div>
+
+  <div class="video-section">
+    <h2>Cheetahs</h2>
+    <a class="video-preview" href="https://www.youtube.com/watch?v=N7e_lDDojas" target="_blank" rel="noopener noreferrer">
+      <img class="video-thumb" src="https://img.youtube.com/vi/N7e_lDDojas/hqdefault.jpg" alt="Cheetahs video thumbnail" loading="lazy">
+    </a>
+    <br>
+    <a class="watch-btn" href="https://www.youtube.com/watch?v=N7e_lDDojas" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+    <div id="cheetahQuestions" class="question-box">
+      <p>Questions</p>
+      <ul id="cheetahQ"></ul>
+    </div>
+  </div>
+
+  <script>
+    const questions = {
+      elephant: [
+        'Why are Asian elephants endangered?',
+        'What habitats do they live in?',
+        'How do humans affect their survival?',
+        'What can people do to protect them?',
+        'What did you learn from this video?'
+      ],
+      polar: [
+        'How does climate change affect polar bears?',
+        'What do polar bears eat?',
+        'Why is sea ice important?',
+        'What threats do humans pose?',
+        'What conservation actions are possible?'
+      ],
+      turtle: [
+        'What dangers do sea turtles face?',
+        'How do plastics affect them?',
+        'Where do sea turtles lay eggs?',
+        'What can humans do to help?',
+        'What did you learn from this video?'
+      ],
+      cheetah: [
+        'Why are cheetahs losing their habitats?',
+        'How fast can a cheetah run?',
+        'What do cheetahs eat?',
+        'What threats do they face?',
+        'What conservation efforts are being made?'
+      ]
+    };
+
+    function renderQuestions() {
+      Object.keys(questions).forEach((animal) => {
+        const list = document.getElementById(animal + 'Q');
+        list.innerHTML = '';
+        questions[animal].forEach((q) => {
+          const item = document.createElement('li');
+          item.textContent = q;
+          list.appendChild(item);
+        });
+      });
+    }
+
+    renderQuestions();
+  </script>
+</body>
+</html>
