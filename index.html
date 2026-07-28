@@ -4,50 +4,90 @@
   <meta charset="UTF-8">
   <title>Fun Learning Games Hub</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
-    h1 { color: #2e8b57; }
-    .grade-section { margin: 20px; padding: 20px; border: 2px solid #2e8b57; border-radius: 10px; background: #fff; }
-    .grade-section h2 { color: #4682b4; }
-    .game-link { display: block; margin: 10px; color: #000; text-decoration: none; font-weight: bold; }
-    .game-link:hover { color: #2e8b57; }
+    body { 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      background: #f0f8ff; 
+      font-size: 20px; /* 整體字體放大 */
+    }
+    h1 { 
+      color: #2e8b57; 
+      font-size: 36px; /* 標題更大 */
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap; /* 允許換行 */
+      justify-content: center; /* 置中排列 */
+    }
+    .grade-section { 
+      flex: 0 0 45%; /* 每個區塊佔一行的約一半寬度 */
+      margin: 15px; 
+      padding: 20px; 
+      border: 2px solid #2e8b57; 
+      border-radius: 10px; 
+      background: #fff; 
+      box-sizing: border-box;
+    }
+    .grade-section h2 { 
+      color: #4682b4; 
+      font-size: 24px; /* 年級標題放大 */
+    }
+    .game-link { 
+      display: block; 
+      margin: 12px; 
+      color: #000; 
+      text-decoration: none; 
+      font-weight: bold; 
+      font-size: 18px; /* 遊戲連結字體放大 */
+    }
+    .game-link:hover { 
+      color: #2e8b57; 
+    }
   </style>
 </head>
 <body>
   <h1>🎮 Fun Learning Games Hub</h1>
   <p>選擇你的年級，開始遊戲吧！</p>
 
-  <!-- 六年級遊戲區 -->
-  <div class="grade-section">
-    <h2>小六 (Primary Six)</h2>
-    <a href="green detective.html" class="game-link">🌱 Green Detective</a>
-    <a href="Doctor's visit.html" class="game-link">🏥 Doctor's Visit</a>
-    <a href="unless jumbled sentences.html" class="game-link"> Jumbled Sentences_unless</a>
-  </div>
+  <div class="container">
+    <!-- 六年級遊戲區 -->
+    <div class="grade-section">
+      <h2>小六 (Primary Six)</h2>
+      <a href="green detective.html" class="game-link">🌱 Green Detective</a>
+      <a href="Doctor's visit.html" class="game-link">🏥 Doctor's Visit</a>
+      <a href="unless jumbled sentences.html" class="game-link">📝 Jumbled Sentences_unless</a>
+      <a href="endangered animals videos.html" class="game-link">🎬 Endangered animals</a>
+    </div>
 
-  <!-- 其他年級區塊 (可日後新增) -->
-  <div class="grade-section">
-    <h2>小一 (Primary One)</h2>
-    <p>遊戲即將推出...</p>
-  </div>
+    <!-- 小一 -->
+    <div class="grade-section">
+      <h2>小一 (Primary One)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
 
-  <div class="grade-section">
-    <h2>小二 (Primary Two)</h2>
-    <p>遊戲即將推出...</p>
-  </div>
+    <!-- 小二 -->
+    <div class="grade-section">
+      <h2>小二 (Primary Two)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
 
-  <div class="grade-section">
-    <h2>小三 (Primary Three)</h2>
-    <p>遊戲即將推出...</p>
-  </div>
+    <!-- 小三 -->
+    <div class="grade-section">
+      <h2>小三 (Primary Three)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
 
-  <div class="grade-section">
-    <h2>小四 (Primary Four)</h2>
-    <p>遊戲即將推出...</p>
-  </div>
+    <!-- 小四 -->
+    <div class="grade-section">
+      <h2>小四 (Primary Four)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
 
-  <div class="grade-section">
-    <h2>小五 (Primary Five)</h2>
-    <p>遊戲即將推出...</p>
+    <!-- 小五 -->
+    <div class="grade-section">
+      <h2>小五 (Primary Five)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
   </div>
 </body>
 </html>
