@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shopping Town Adventure</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
+    h1 { color: #2e8b57; }
+    #question { font-size: 22px; margin: 20px; }
+    #map {
+      position: relative;
+      width: 700px;
+      height: 700px;
+      margin: auto;
+      background: #cce7ff;
+      border: 5px solid #333;
+    }
+    .road.horizontal {
+      position: absolute;
+      top: 350px;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #555;
+      background-image: repeating-linear-gradient(to right, #555 0 30px, white 30px 40px);
+    }
+    .road.vertical {
+      position: absolute;
+      left: 350px;
+      top: 0;
+      width: 60px;
+      height: 100%;
+      background: #555;
+      background-image: repeating-linear-gradient(to bottom, #555 0 30px, white 30px 40px);
+    }
+    .shop, .building {
+      position: absolute;
+      width: 90px; height: 90px;
+      border: 2px solid #4682b4;
+      border-radius: 10px;
+      text-align: center;
+      padding: 5px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #000;
+    }
+    .shop span, .building span {
+      display: block;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    /* Color coding */
+    #bakery { background: #fff8dc; }
+    #restaurant { background: #ffe4e1; }
+    #supermarket { background: #e0ffe0; }
+    #bookshop { background: #f0e68c; }
+    #pet\ shop { background: #fafad2; }
+    #clothes\ shop { background: #e6e6fa; }
+    #shoe\ shop { background: #d1eeee; }
+    #toy\ shop { background: #ffdab9; }
+    #hospital { background: #f5f5f5; }
+    #school { background: #fffacd; }
+    #park { background: #98fb98; }
+    #police { background: #add8e6; }
+    #fire { background: #ffb6c1; }
+
+    #kid {
+      position: absolute;
+      left: 50px; top: 50px;
+      font-size: 40px;
+      transition: left 1s ease, top 1s ease;
+    }
+    #feedback { margin-top: 20px; font-size: 20px; font-weight: bold; }
+    button {
+      padding: 10px 15px; font-size: 18px; margin: 10px;
+      background: #2e8b57; color: #fff; border: none;
+      border-radius: 6px; cursor: pointer;
+    }
+    button:hover { background: #4682b4; }
+  </style>
+</head>
+<body>
+  <h1>🏙️ Shopping Town Adventure</h1>
+  <button onclick="newQuestion()">🎲 New Question</button>
+  <div id="question">Click "New Question" to start!</div>
+
+  <div id="map">
+    <!-- Roads -->
+    <div class="road horizontal"></div>
+    <div class="road vertical"></div>
+
+    <!-- Shops -->
+    <div class="shop" id="bakery" style="top:250px; left:150px;" onclick="checkAnswer('bakery')">🥖<span>Bakery</span></div>
+    <div class="shop" id="restaurant" style="top:450px; left:150px;" onclick="checkAnswer('restaurant')">🍽️<span>Restaurant</span></div>
+    <div class="shop" id="supermarket" style="top:250px; left:450px;" onclick="checkAnswer('supermarket')">🛒<span>Supermarket</span></div>
+    <div class="shop" id="bookshop" style="top:450px; left:450px;" onclick="checkAnswer('bookshop')">📚<span>Bookshop</span></div>
+    <div class="shop" id="pet shop" style="top:150px; left:300px;" onclick="checkAnswer('pet shop')">🐶<span>Pet Shop</span></div>
+    <div class="shop" id="clothes shop" style="top:550px; left:300px;" onclick="checkAnswer('clothes shop')">👕<span>Clothes Shop</span></div>
+    <div class="shop" id="shoe shop" style="top:150px; left:500px;" onclick="checkAnswer('shoe shop')">👟<span>Shoe Shop</span></div>
+    <div class="shop" id="toy shop" style="top:550px; left:500px;" onclick="checkAnswer('toy shop')">🧸<span>Toy Shop</span></div>
+
+    <!-- Other Buildings -->
+    <div class="building" id="hospital" style="top:150px; left:50px;">🏥<span>Hospital</span></div>
+    <div class="building" id="school" style="top:550px; left:50px;">🏫<span>School</span></div>
+    <div class="building" id="park" style="top:300px; left:600px;">🌳<span>Park</span></div>
+    <div class="building" id="police" style="top:400px; left:600px;">🚓<span>Police Station</span></div>
+    <div class="building" id="fire" style="top:500px; left:600px;">🚒<span>Fire Station</span></div>
+
+    <!-- Kid -->
+    <div id="kid">🧒</div>
+  </div>
+
+  <div id="feedback"></div>
+
+  <script>
+    const questions = [
+      {item:"bread", shop:"bakery"},
+      {item:"rice", shop:"supermarket"},
+      {item:"a book", shop:"bookshop"},
+      {item:"a puppy", shop:"pet shop"},
+      {item:"a T-shirt", shop:"clothes shop"},
+      {item:"shoes", shop:"shoe shop"},
+      {item:"a cake", shop:"bakery"},
+      {item:"a toy car", shop:"toy shop"},
+      {item:"lunch", shop:"restaurant"}
+    ];
+
+    let currentQuestion = null;
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voices = speechSynthesis.getVoices();
+      const preferredVoice = voices.find(v => v.name.includes("Natural") || v.name.includes("Microsoft") || v.lang === "en-US");
+      if (preferredVoice) utterance.voice = preferredVoice;
+      speechSynthesis.speak(utterance);
+    }
+
+    function newQuestion() {
+      currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+      const qText = "Where can I buy " + currentQuestion.item + "?";
+      document.getElementById("question").textContent = "🧒 " + qText;
+      document.getElementById("feedback").textContent = "";
+      speak(qText);
+    }
+
+    function checkAnswer(shop) {
+      if (!currentQuestion) return;
+      if (shop === currentQuestion.shop) {
+        const answerText = "You can buy " + currentQuestion.item + " at the " + shop + ".";
+        document.getElementById("feedback").textContent = "✅ Correct! " + answerText;
+        document.getElementById("feedback").style.color = "green";
+        speak(answerText);
+        moveKidToShop(shop);
+      } else {
+        document.getElementById("feedback").textContent = "❌ Not quite. Try again!";
+        document.getElementById("feedback").style.color = "red";
+        speak("Not quite. Try again!");
+      }
+    }
+
+    function moveKidToShop(shopId) {
+      const shopDiv = document.getElementById(shopId);
+      if (shopDiv) {
+        const rect = shopDiv.getBoundingClientRect();
+        const mapRect = document.getElementById("map").getBoundingClientRect();
+        const kid = document.getElementById("kid");
+        kid.style.left = (rect.left - mapRect.left) + "px";
+        kid.style.top = (rect.top - mapRect.top) + "px";
+      }
+    }
+
+    // Ensure voices load
+    window.speechSynthesis.onvoiceschanged = () => {};
+  </script>
+</body>
+</html>
