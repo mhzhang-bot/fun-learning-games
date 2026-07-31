@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>First Aid Vocabulary Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
+    h1 { color: #2e8b57; }
+    #injury { font-size: 24px; margin: 20px; font-weight: bold; }
+    #injury img { width: 150px; height: auto; display: block; margin: 10px auto; }
+    .kit { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+    .item {
+      width: 160px;
+      height: 180px;
+      margin: 10px;
+      border: 2px solid #4682b4;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      text-align: center;
+      padding: 10px;
+    }
+    .item img {
+      width: 90px;
+      height: 90px;
+      display: block;
+      margin: 0 auto 5px;
+    }
+    .result { margin-top: 20px; font-size: 20px; font-weight: bold; }
+    button { padding: 10px 15px; font-size: 18px; margin: 10px; background: #2e8b57; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #4682b4; }
+  </style>
+</head>
+<body>
+  <h1>🩹 First Aid Vocabulary Game</h1>
+  <button onclick="newRound()">🎲 New Injury</button>
+  <div id="injury">Click "New Injury" to start!</div>
+
+  <div class="kit" id="kit"></div>
+  <div id="feedback" class="result"></div>
+
+  <script>
+    // Injuries with correct treatment
+    const injuries = {
+      cut: "plaster",
+      "broken arm": "sling",
+      "broken leg": "bandage",
+      burn: "antiseptic cream",
+      "twisted ankle": "ice pack",
+      bruise: "ice pack"
+    };
+
+    // Cartoon injury images
+    const injuryImages = {
+      cut: "https://openclipart.org/image/400px/307308",
+      "broken arm": "https://openclipart.org/image/400px/307309",
+      "broken leg": "https://openclipart.org/image/400px/307310",
+      burn: "https://openclipart.org/image/400px/307311",
+      "twisted ankle": "https://openclipart.org/image/400px/307312",
+      bruise: "https://openclipart.org/image/400px/307313"
+    };
+
+    // Cartoon first aid kit items
+    const items = {
+      plaster: {img:"https://openclipart.org/image/400px/307314", name:"Plaster"},
+      bandage: {img:"https://openclipart.org/image/400px/307315", name:"Bandage"},
+      "ice pack": {img:"https://openclip
