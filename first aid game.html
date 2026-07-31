@@ -7,11 +7,10 @@
     body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
     h1 { color: #2e8b57; }
     #injury { font-size: 24px; margin: 20px; font-weight: bold; }
-    #injury img { width: 150px; height: auto; display: block; margin: 10px auto; }
     .kit { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
     .item {
       width: 160px;
-      height: 180px;
+      height: 120px;
       margin: 10px;
       border: 2px solid #4682b4;
       border-radius: 10px;
@@ -19,12 +18,7 @@
       cursor: pointer;
       text-align: center;
       padding: 10px;
-    }
-    .item img {
-      width: 90px;
-      height: 90px;
-      display: block;
-      margin: 0 auto 5px;
+      font-size: 24px;
     }
     .result { margin-top: 20px; font-size: 20px; font-weight: bold; }
     button { padding: 10px 15px; font-size: 18px; margin: 10px; background: #2e8b57; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
@@ -40,37 +34,36 @@
   <div id="feedback" class="result"></div>
 
   <script>
-    // Injuries with correct treatment
+    // Injuries with multiple possible treatments
     const injuries = {
-      cut: "plaster",
-      "broken arm": "sling",
-      "broken leg": "bandage",
-      burn: "antiseptic cream",
-      "twisted ankle": "ice pack",
-      bruise: "ice pack"
+      cut: ["plaster", "antiseptic wipe"],
+      "broken arm": ["sling"],
+      "broken leg": ["bandage"],
+      burn: ["antiseptic cream"],
+      "twisted ankle": ["ice pack"],
+      bruise: ["ice pack"]
     };
 
-    // Cartoon injury images
-    const injuryImages = {
-      cut: "https://openclipart.org/download/307308/Cartoon-Cut.png",
-      "broken arm": "https://openclipart.org/download/307309/Cartoon-Broken-Arm.png",
-      "broken leg": "https://openclipart.org/download/307310/Cartoon-Broken-Leg.png",
-      burn: "https://openclipart.org/download/307311/Cartoon-Burn.png",
-      "twisted ankle": "https://openclipart.org/download/307312/Cartoon-Twisted-Ankle.png",
-      bruise: "https://openclipart.org/download/307313/Cartoon-Bruise.png"
+    // Emoji representations of injuries
+    const injuryEmojis = {
+      cut: "🩸",
+      "broken arm": "💪❌",
+      "broken leg": "🦵❌",
+      burn: "🔥",
+      "twisted ankle": "🦶💥",
+      bruise: "💜"
     };
 
-    // Cartoon first aid kit items
+    // Emoji representations of first aid kit items (alcohol removed)
     const items = {
-      plaster: {img:"https://openclipart.org/download/307314/Cartoon-Plaster.png", name:"Plaster"},
-      bandage: {img:"https://openclipart.org/download/307315/Cartoon-Bandage.png", name:"Bandage"},
-      "ice pack": {img:"https://openclipart.org/download/307316/Cartoon-Ice-Pack.png", name:"Ice Pack"},
-      "antiseptic cream": {img:"https://openclipart.org/download/307317/Cartoon-Antiseptic-Cream.png", name:"Antiseptic Cream"},
-      sling: {img:"https://openclipart.org/download/307318/Cartoon-Sling.png", name:"Sling"},
-      tweezers: {img:"https://openclipart.org/download/307319/Cartoon-Tweezers.png", name:"Tweezers"},
-      "cotton wool ball": {img:"https://openclipart.org/download/307320/Cartoon-Cotton-Wool.png", name:"Cotton Wool Ball"},
-      "antiseptic wipe": {img:"https://openclipart.org/download/307321/Cartoon-Antiseptic-Wipe.png", name:"Antiseptic Wipe"},
-      alcohol: {img:"https://openclipart.org/download/307322/Cartoon-Alcohol.png", name:"Alcohol"}
+      plaster: {emoji:"🩹", name:"Plaster"},
+      bandage: {emoji:"🩼", name:"Bandage"},
+      "ice pack": {emoji:"🧊", name:"Ice Pack"},
+      "antiseptic cream": {emoji:"🧴", name:"Antiseptic Cream"},
+      sling: {emoji:"🪢", name:"Sling"},
+      tweezers: {emoji:"✂️", name:"Tweezers"},
+      "cotton wool ball": {emoji:"⚪", name:"Cotton Wool Ball"},
+      "antiseptic wipe": {emoji:"🧻", name:"Antiseptic Wipe"}
     };
 
     let currentInjury = "";
@@ -79,7 +72,7 @@
       const keys = Object.keys(injuries);
       currentInjury = keys[Math.floor(Math.random() * keys.length)];
       document.getElementById("injury").innerHTML = 
-        "🚑 Injury: " + currentInjury + "<br><img src='" + injuryImages[currentInjury] + "' alt='" + currentInjury + "'>";
+        "🚑 Injury: " + currentInjury + " " + injuryEmojis[currentInjury];
       document.getElementById("feedback").textContent = "";
       showKit();
     }
@@ -90,16 +83,16 @@
       for (let key in items) {
         const div = document.createElement("div");
         div.className = "item";
-        div.innerHTML = `<img src="${items[key].img}" alt="${items[key].name}"><span>${items[key].name}</span>`;
+        div.innerHTML = `${items[key].emoji}<br><span>${items[key].name}</span>`;
         div.onclick = () => checkAnswer(key);
         kitDiv.appendChild(div);
       }
     }
 
     function checkAnswer(choice) {
-      const correct = injuries[currentInjury];
-      if (choice === correct) {
-        document.getElementById("feedback").textContent = "✅ Correct! Use " + items[choice].name + " for a " + currentInjury + ".";
+      const correctAnswers = injuries[currentInjury];
+      if (correctAnswers.includes(choice)) {
+        document.getElementById("feedback").textContent = "✅ Correct! " + items[choice].name + " can be used for a " + currentInjury + ".";
         document.getElementById("feedback").style.color = "green";
       } else {
         document.getElementById("feedback").textContent = "❌ Not quite. Try again!";
