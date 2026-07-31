@@ -39,9 +39,14 @@
       cut: ["plaster", "antiseptic wipe"],
       "broken arm": ["sling"],
       "broken leg": ["bandage"],
-      burn: ["antiseptic cream"],
+      burn: ["running water", "antiseptic cream", "bandage"],  // updated
       "twisted ankle": ["ice pack"],
-      bruise: ["ice pack"]
+      bruise: ["ice pack"],
+      splinter: ["tweezers", "antiseptic wipe", "plaster"],
+      "twisted wrist": ["ice pack", "bandage"],
+      "scraped knee": ["antiseptic wipe", "cotton wool ball", "plaster", "bandage"],
+      blister: ["plaster", "bandage", "antiseptic wipe"],
+      "slammed finger": ["ice pack", "bandage"]
     };
 
     // Emoji representations of injuries
@@ -51,19 +56,25 @@
       "broken leg": "🦵❌",
       burn: "🔥",
       "twisted ankle": "🦶💥",
-      bruise: "💜"
+      bruise: "💜",
+      splinter: "✋🌲",
+      "twisted wrist": "✋💥",
+      "scraped knee": "🦵🩸",
+      blister: "🦶🔥",
+      "slammed finger": "☝️💥"
     };
 
-    // Emoji representations of first aid kit items (alcohol removed)
+    // Emoji representations of first aid kit items
     const items = {
       plaster: {emoji:"🩹", name:"Plaster"},
-      bandage: {emoji:"🩼", name:"Bandage"},
+      bandage: {emoji:"🧻", name:"Bandage"},
       "ice pack": {emoji:"🧊", name:"Ice Pack"},
       "antiseptic cream": {emoji:"🧴", name:"Antiseptic Cream"},
       sling: {emoji:"🪢", name:"Sling"},
       tweezers: {emoji:"✂️", name:"Tweezers"},
       "cotton wool ball": {emoji:"⚪", name:"Cotton Wool Ball"},
-      "antiseptic wipe": {emoji:"🧻", name:"Antiseptic Wipe"}
+      "antiseptic wipe": {emoji:"🧼", name:"Antiseptic Wipe"},
+      "running water": {emoji:"🚰", name:"Running Water"}  // new item
     };
 
     let currentInjury = "";
