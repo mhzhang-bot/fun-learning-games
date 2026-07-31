@@ -52,16 +52,60 @@
 
     // Cartoon injury images
     const injuryImages = {
-      cut: "a cut.png",
-      "broken arm": "https://openclipart.org/image/400px/307309",
-      "broken leg": "https://openclipart.org/image/400px/307310",
-      burn: "https://openclipart.org/image/400px/307311",
-      "twisted ankle": "https://openclipart.org/image/400px/307312",
-      bruise: "https://openclipart.org/image/400px/307313"
+      cut: "https://openclipart.org/download/307308/Cartoon-Cut.png",
+      "broken arm": "https://openclipart.org/download/307309/Cartoon-Broken-Arm.png",
+      "broken leg": "https://openclipart.org/download/307310/Cartoon-Broken-Leg.png",
+      burn: "https://openclipart.org/download/307311/Cartoon-Burn.png",
+      "twisted ankle": "https://openclipart.org/download/307312/Cartoon-Twisted-Ankle.png",
+      bruise: "https://openclipart.org/download/307313/Cartoon-Bruise.png"
     };
 
     // Cartoon first aid kit items
     const items = {
-      plaster: {img:"https://openclipart.org/image/400px/307314", name:"Plaster"},
-      bandage: {img:"https://openclipart.org/image/400px/307315", name:"Bandage"},
-      "ice pack": {img:"https://openclip
+      plaster: {img:"https://openclipart.org/download/307314/Cartoon-Plaster.png", name:"Plaster"},
+      bandage: {img:"https://openclipart.org/download/307315/Cartoon-Bandage.png", name:"Bandage"},
+      "ice pack": {img:"https://openclipart.org/download/307316/Cartoon-Ice-Pack.png", name:"Ice Pack"},
+      "antiseptic cream": {img:"https://openclipart.org/download/307317/Cartoon-Antiseptic-Cream.png", name:"Antiseptic Cream"},
+      sling: {img:"https://openclipart.org/download/307318/Cartoon-Sling.png", name:"Sling"},
+      tweezers: {img:"https://openclipart.org/download/307319/Cartoon-Tweezers.png", name:"Tweezers"},
+      "cotton wool ball": {img:"https://openclipart.org/download/307320/Cartoon-Cotton-Wool.png", name:"Cotton Wool Ball"},
+      "antiseptic wipe": {img:"https://openclipart.org/download/307321/Cartoon-Antiseptic-Wipe.png", name:"Antiseptic Wipe"},
+      alcohol: {img:"https://openclipart.org/download/307322/Cartoon-Alcohol.png", name:"Alcohol"}
+    };
+
+    let currentInjury = "";
+
+    function newRound() {
+      const keys = Object.keys(injuries);
+      currentInjury = keys[Math.floor(Math.random() * keys.length)];
+      document.getElementById("injury").innerHTML = 
+        "🚑 Injury: " + currentInjury + "<br><img src='" + injuryImages[currentInjury] + "' alt='" + currentInjury + "'>";
+      document.getElementById("feedback").textContent = "";
+      showKit();
+    }
+
+    function showKit() {
+      const kitDiv = document.getElementById("kit");
+      kitDiv.innerHTML = "";
+      for (let key in items) {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `<img src="${items[key].img}" alt="${items[key].name}"><span>${items[key].name}</span>`;
+        div.onclick = () => checkAnswer(key);
+        kitDiv.appendChild(div);
+      }
+    }
+
+    function checkAnswer(choice) {
+      const correct = injuries[currentInjury];
+      if (choice === correct) {
+        document.getElementById("feedback").textContent = "✅ Correct! Use " + items[choice].name + " for a " + currentInjury + ".";
+        document.getElementById("feedback").style.color = "green";
+      } else {
+        document.getElementById("feedback").textContent = "❌ Not quite. Try again!";
+        document.getElementById("feedback").style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>
