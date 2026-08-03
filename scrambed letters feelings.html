@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feelings Emoji Spelling Game</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      background: #f0f8ff;
+    }
+    h1 { color: #2e8b57; }
+    #emojiCard { font-size: 70px; margin: 20px; }
+    #scramble { margin: 20px; font-size: 40px; }
+    .letter {
+      display: inline-block;
+      margin: 8px;
+      padding: 15px;
+      border: 3px solid #333;
+      border-radius: 8px;
+      background: #fff;
+      cursor: grab;
+      font-size: 40px;
+      user-select: none;
+    }
+    #dropzone {
+      margin: 20px; padding: 20px;
+      border: 3px dashed #333;
+      min-height: 80px;
+      font-size: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .slot {
+      width: 50px; height: 60px;
+      border-bottom: 4px solid #333;
+      text-align: center;
+      font-size: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: bottom;
+      user-select: none;
+    }
+    #answer { margin-top: 20px; font-size: 28px; font-weight: bold; display: none; }
+    #soundBtn { display: none; }
+    #scoreBoard { margin-top: 20px; font-size: 24px; font-weight: bold; }
+    #progressContainer {
+      width: 80%; margin: 20px auto; background: #ddd; border-radius: 10px;
+    }
+    #progressBar {
+      width: 0%; height: 25px; background: #2e8b57; border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+    #progressText { font-size: 20px; margin-top: 10px; }
+    button {
+      padding: 12px 18px; font-size: 20px; margin: 10px;
+      background: #2e8b57; color: #fff; border: none;
+      border-radius: 6px; cursor: pointer;
+    }
+    button:hover { background: #4682b4; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Feelings Emoji Spelling Game</h1>
+  <button onclick="startLevel(1)">🎲 Level 1 (Easy)</button>
+  <button onclick="startLevel(2)">🎲 Level 2 (Hard)</button>
+  <div id="emojiCard">Choose a level to start!</div>
+
+  <div id="scramble"></div>
+  <div id="dropzone"></div>
+  <button onclick="checkAnswer()">✅ Check Answer</button>
+  <button id="soundBtn" onclick="repeatWord()">🔊 Play Sound</button>
+
+  <div id="answer"></div>
+  <div id="scoreBoard"></div>
+
+  <div id="progressContainer">
+    <div id="progressBar"></div>
+  </div>
+  <div id="progressText"></div>
+
+  <script>
+    const feelingsLevel1 = [
+      { word: "confident", emoji: "😎" },
+      { word: "glad", emoji: "😀" },
+      { word: "relaxed", emoji: "😌" },
+      { word: "thankful", emoji: "🙏" },
+      { word: "embarrassed", emoji: "😳" },
+      { word: "frustrated", emoji: "😤" },
+      { word: "jealous", emoji: "😒" },
+      { word: "nervous", emoji: "😬" },
+      { word: "stressed", emoji: "😫" },
+      { word: "upset", emoji: "😢" }
+    ];
+
+    const feelingsLevel2 = [
+      ...feelingsLevel1,
+      { word: "excited", emoji: "🤩" },
+      { word: "curious", emoji: "🤔" },
+      { word: "lonely", emoji: "🥺" },
+      { word: "proud", emoji: "🥰" },
+      { word: "shy", emoji: "😊" },
+      { word: "angry", emoji: "😡" },
+      { word: "surprised", emoji: "😲" },
+      { word: "bored", emoji: "😐" },
+      { word: "hopeful", emoji: "🙂" },
+      { word: "disappointed", emoji: "😞" }
+    ];
+
+    let currentWord = null;
+    let currentLevel = null;
+    let score = 0;
+    let challengesCompleted = 0;
+    let totalChallenges = 0;
+    let wordList = [];
+
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startLevel(level) {
+      currentLevel = level;
+      score = 0;
+      challengesCompleted = 0;
+      wordList = level === 1 ? feelingsLevel1 : feelingsLevel2;
+      totalChallenges = wordList.length;
+      document.getElementById("scoreBoard").textContent = "Score: 0";
+      document.getElementById("answer").style.display = "none";
+      newRound();
+      updateProgress();
+    }
+
+    function createLetterChip(letter, source = "pool") {
+      const span = document.createElement("span");
+      span.textContent = letter;
+      span.className = "letter";
+      span.draggable = true;
+      span.dataset.source = source;
+      span.addEventListener("dragstart", drag);
+      span.addEventListener("click", () => {
+        const emptySlot = [...document.querySelectorAll(".slot")].find(slot => !slot.textContent.trim());
+        if (!emptySlot) return;
+
+        emptySlot.textContent = letter;
+        span.remove();
+      });
+      return span;
+    }
+
+    function returnLetterToPool(letter) {
+      const scrambleDiv = document.getElementById("scramble");
+      scrambleDiv.appendChild(createLetterChip(letter, "pool"));
+    }
+
+    function newRound() {
+      if (challengesCompleted >= totalChallenges) {
+        endLevel();
+        return;
+      }
+
+      const card = wordList[challengesCompleted];
+      currentWord = card.word;
+      document.getElementById("emojiCard").textContent = card.emoji;
+
+      const scrambled = shuffle(currentWord.split(""));
+      const scrambleDiv = document.getElementById("scramble");
+      scrambleDiv.innerHTML = "";
+      scrambled.forEach(letter => scrambleDiv.appendChild(createLetterChip(letter, "pool")));
+
+      const dropzone = document.getElementById("dropzone");
+      dropzone.innerHTML = "";
+
+      for (let i = 0; i < currentWord.length; i++) {
+        const slot = document.createElement("div");
+        slot.className = "slot";
+
+        if (currentLevel === 1 && Math.random() < 0.3) {
+          const hintedLetter = currentWord[i];
+          slot.textContent = hintedLetter;
+          const matchingLetter = [...scrambleDiv.children].find(el => el.textContent === hintedLetter);
+          if (matchingLetter) matchingLetter.remove();
+        }
+
+        slot.addEventListener("dragover", ev => ev.preventDefault());
+        slot.addEventListener("drop", ev => {
+          ev.preventDefault();
+          const letter = ev.dataTransfer.getData("text");
+          const id = ev.dataTransfer.getData("id");
+          const sourceLetter = document.getElementById(id);
+
+          if (slot.textContent.trim()) {
+            const oldLetter = slot.textContent.trim();
+            if (sourceLetter && sourceLetter !== slot) {
+              sourceLetter.remove();
+            }
+            returnLetterToPool(oldLetter);
+          }
+
+          slot.textContent = letter;
+          if (sourceLetter) sourceLetter.remove();
+        });
+
+        slot.addEventListener("click", () => {
+          const currentLetter = slot.textContent.trim();
+          if (!currentLetter) return;
+          slot.textContent = "";
+          returnLetterToPool(currentLetter);
+        });
+
+        dropzone.appendChild(slot);
+      }
+
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("soundBtn").style.display = "none";
+      updateProgress();
+    }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.textContent);
+      ev.dataTransfer.setData("id", ev.target.id || "letter-" + Math.random());
+      ev.target.id = ev.target.id || "letter-" + Math.random();
+    }
+
+    function repeatWord() {
+      if (currentWord) {
+        speak(currentWord);
+      }
+    }
+
+    function updateProgress() {
+      const total = totalChallenges || 0;
+      const completed = Math.min(challengesCompleted, total);
+      const percent = total ? (completed / total) * 100 : 0;
+      document.getElementById("progressBar").style.width = percent + "%";
+      document.getElementById("progressText").textContent =
+        total ? `Progress: ${completed}/${total} words` : "Progress: 0/0 words";
+    }
+
+    function endLevel() {
+      const message = currentLevel === 1 ? "Level 1 complete! 🎉" : "Level 2 complete! 🎉";
+      document.getElementById("emojiCard").textContent = message;
+      document.getElementById("scramble").innerHTML = "";
+      document.getElementById("dropzone").innerHTML = "";
+      document.getElementById("answer").textContent = "Final score: " + score;
+      document.getElementById("answer").style.color = "#2e8b57";
+      document.getElementById("answer").style.display = "block";
+      document.getElementById("soundBtn").style.display = "none";
+      document.getElementById("scoreBoard").textContent = "Score: " + score;
+      document.getElementById("progressBar").style.width = "100%";
+      document.getElementById("progressText").textContent = "You completed all words in this level.";
+    }
+
+    function nextRound() {
+      if (challengesCompleted >= totalChallenges) {
+        endLevel();
+        return;
+      }
+      newRound();
+    }
+
+    function checkAnswer() {
+      if (!currentWord) return;
+
+      const slots = document.querySelectorAll(".slot");
+      let attempt = "";
+      slots.forEach(slot => {
+        attempt += slot.textContent.trim();
+      });
+
+      if (attempt.toLowerCase() === currentWord) {
+        document.getElementById("answer").textContent = "✅ Correct! The word is " + currentWord;
+        document.getElementById("answer").style.color = "green";
+        document.getElementById("soundBtn").style.display = "inline-block";
+        speak(currentWord);
+
+        if (currentLevel === 1) {
+          score += 10;
+        } else {
+          score += 5;
+        }
+
+        challengesCompleted += 1;
+        document.getElementById("scoreBoard").textContent = "Score: " + score;
+        updateProgress();
+        document.getElementById("answer").style.display = "block";
+
+        setTimeout(() => {
+          nextRound();
+        }, 1200);
+      } else {
+        document.getElementById("answer").textContent = "❌ Try again!";
+        document.getElementById("answer").style.color = "red";
+        document.getElementById("answer").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
