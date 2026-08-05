@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feelings Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
+    h1 { color: #2e8b57; }
+    .section { margin: 30px; }
+    .word, .slot {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #fff;
+      cursor: grab;
+      font-size: 22px;
+    }
+    .slot { background: #eee; min-width: 100px; }
+    #scenarioCard {
+      margin: 30px auto;
+      padding: 20px;
+      width: 400px;
+      border: 3px solid #333;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 24px;
+      font-weight: bold;
+      min-height: 120px;
+    }
+    #challenge { margin-top: 20px; font-size: 20px; color: #4682b4; font-style: italic; }
+    #answer { margin-top: 20px; font-size: 22px; color: green; display: none; }
+    button {
+      padding: 12px 20px; font-size: 20px; margin: 10px;
+      background: #2e8b57; color: #fff; border: none;
+      border-radius: 8px; cursor: pointer;
+    }
+    button:hover { background: #4682b4; }
+    #showBtn { background: #ff9800; }
+    #showBtn:hover { background: #e67e22; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Feelings Adjectives Game</h1>
+
+  <!-- Level Selector -->
+  <div class="section">
+    <h2>Select Level</h2>
+    <button onclick="startLevel(1)">Level 1: Matching</button>
+    <button onclick="startLevel(2)">Level 2: Scenario Cards</button>
+    <button onclick="startLevel(3)">Level 3: Advanced Scenario Cards</button>
+  </div>
+
+  <!-- Level 1 -->
+  <div class="section" id="level1" style="display:none;">
+    <h2>Level 1: Matching Game</h2>
+    <p>Drag the adjectives to the correct prepositions.</p>
+    <div id="adjectives"></div>
+    <div id="prepositions"></div>
+    <div id="feedback"></div>
+  </div>
+
+  <!-- Level 2 & 3 -->
+  <div class="section" id="level2" style="display:none;">
+    <h2>Scenario Cards</h2>
+    <button onclick="drawScenario()">🎲 Draw a Card</button>
+    <div id="scenarioCard">Click the button to start!</div>
+    <div id="challenge"></div>
+    <button id="showBtn" onclick="showAnswer()">📖 Show Answer Sentence</button>
+    <div id="answer"></div>
+  </div>
+
+  <script>
+    // Level 1 data
+    const pairs = {
+      "thankful":"for",
+      "excited":"about",
+      "relaxed":"about",
+      "worried":"about",
+      "confident":"of",
+      "frightened":"of",
+      "jealous":"of",
+      "proud":"of",
+      "angry":"with",
+      "bored":"with"
+    };
+
+    function shuffleArray(arr) {
+      const array = [...arr];
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function makeDifferentOrder(original) {
+      const shuffled = shuffleArray(original);
+      if (JSON.stringify(shuffled) === JSON.stringify(original)) {
+        return [...shuffled].reverse();
+      }
+      return shuffled;
+    }
+
+    function setupMatching() {
+      const adjDiv = document.getElementById("adjectives");
+      const prepDiv = document.getElementById("prepositions");
+      adjDiv.innerHTML = "";
+      prepDiv.innerHTML = "";
+      document.getElementById("feedback").textContent = "";
+
+      const adjectiveOrder = makeDifferentOrder(Object.keys(pairs));
+      const prepOrder = makeDifferentOrder(Object.values(pairs));
+
+      adjectiveOrder.forEach((adj) => {
+        const span = document.createElement("span");
+        span.textContent = adj;
+        span.className = "word";
+        span.draggable = true;
+        span.dataset.word = adj;
+        span.addEventListener("dragstart", drag);
+        adjDiv.appendChild(span);
+      });
+
+      prepOrder.forEach((prep) => {
+        const slot = document.createElement("div");
+        slot.textContent = prep;
+        slot.className = "slot";
+        slot.addEventListener("dragover", ev => ev.preventDefault());
+        slot.addEventListener("drop", ev => {
+          ev.preventDefault();
+          const adj = ev.dataTransfer.getData("text");
+          const isCorrect = pairs[adj] === prep;
+
+          if (isCorrect) {
+            slot.style.background = "lightgreen";
+            document.getElementById("feedback").textContent = "✅ Correct: " + adj + " " + prep;
+            const matchingWord = document.querySelector(`#adjectives .word[data-word="${adj}"]`);
+            if (matchingWord) matchingWord.style.display = "none";
+          } else {
+            slot.style.background = "pink";
+            document.getElementById("feedback").textContent = "❌ Try again!";
+          }
+        });
+        prepDiv.appendChild(slot);
+      });
+    }
+
+    function drag(ev){
+      ev.dataTransfer.setData("text", ev.target.textContent);
+    }
+
+    // Level 2 scenarios
+    const scenariosLevel2 = [
+      {emoji:"👨‍🍳", phrase:"proud of", text:"a boy cooking dinner", answer:"He is proud of cooking dinner."},
+      {emoji:"🎨", phrase:"excited about", text:"a girl painting a picture", answer:"She is excited about painting a picture."},
+      {emoji:"🎹", phrase:"thankful for", text:"a child learning piano", answer:"He is thankful for his piano teacher."},
+      {emoji:"🏊", phrase:"confident of", text:"kids in a swimming competition", answer:"They are confident of winning the race."},
+      {emoji:"🧩", phrase:"worried about", text:"a girl solving a puzzle", answer:"She is worried about the puzzle."},
+      {emoji:"😱", phrase:"frightened of", text:"a boy seeing a spider", answer:"He is frightened of the spider."},
+      {emoji:"😒", phrase:"jealous of", text:"two friends with new toys", answer:"She is jealous of her friend's new toy."},
+      {emoji:"😡", phrase:"angry with", text:"a child arguing with a friend", answer:"He is angry with his friend."},
+      {emoji:"😐", phrase:"bored with", text:"a student listening to a long lecture", answer:"He is bored with the lecture."},
+      {emoji:"😌", phrase:"relaxed about", text:"a boy lying on the sofa", answer:"He is relaxed about lying on the sofa."}
+    ];
+
+    // Level 3 scenarios (advanced)
+    const scenariosLevel3 = [
+      {emoji:"😳", phrase:"ashamed of", text:"a boy dropping his ice cream", answer:"He is ashamed of dropping his ice cream."},
+      {emoji:"🙏", phrase:"grateful to", text:"a girl thanking her teacher", answer:"She is grateful to her teacher."},
+      {emoji:"🤔", phrase:"interested in", text:"a child reading a science book", answer:"He is interested in reading science books."},
+      {emoji:"😲", phrase:"surprised at", text:"a boy opening a gift box", answer:"He is surprised at the gift."},
+      {emoji:"😞", phrase:"disappointed with", text:"a girl losing a game", answer:"She is disappointed with losing the game."},
+      {emoji:"😌", phrase:"satisfied with", text:"a student finishing homework", answer:"He is satisfied with his homework."},
+      {emoji:"🧐", phrase:"curious about", text:"a child looking at insects", answer:"She is curious about the insects."},
+      {emoji:"😠", phrase:"annoyed with", text:"a boy waiting for a late bus", answer:"He is annoyed with the late bus."},
+      {emoji:"🌟🙂", phrase:"hopeful about", text:"a girl preparing for an exam", answer:"She is hopeful about her exam."},
+      {emoji:"🙈", phrase:"embarrassed about", text:"a child making a mistake in class", answer:"He is embarrassed about his mistake."}
+    ];
+
+    let currentScenario = null;
+    let currentLevel = null;
+
+    function startLevel(level) {
+      currentLevel = level;
+      document.getElementById("level1").style.display = (level === 1) ? "block" : "none";
+      document.getElementById("level2").style.display = (level === 2 || level === 3) ? "block" : "none";
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("answer").textContent = "";
+      document.getElementById("challenge").textContent = "";
+
+      if (level === 1) {
+        setupMatching();
+      }
+
+      if (level === 2 || level === 3) {
+        drawScenario();
+      }
+    }
+
+    function drawScenario() {
+      const sceneList = currentLevel === 2 ? scenariosLevel2 : scenariosLevel3;
+      currentScenario = sceneList[Math.floor(Math.random() * sceneList.length)];
+      document.getElementById("scenarioCard").textContent = currentScenario.emoji + " " + currentScenario.text;
+      document.getElementById("challenge").textContent = "Choose the best phrase: " + currentScenario.phrase;
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("answer").textContent = "";
+    }
+
+    function showAnswer() {
+      if (!currentScenario) {
+        drawScenario();
+        return;
+      }
+      document.getElementById("answer").textContent = currentScenario.answer;
+      document.getElementById("answer").style.display = "block";
+    }
+
+    // End of game logic
+    </script>
+  </body>
+</html>
