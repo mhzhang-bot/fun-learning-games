@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Activity Card Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
+    h1 { color: #2e8b57; }
+    #card {
+      margin: 40px auto;
+      padding: 30px;
+      width: 350px;
+      border: 3px solid #333;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 28px;
+      font-weight: bold;
+      min-height: 120px;
+    }
+    #challenge {
+      margin-top: 20px;
+      font-size: 22px;
+      color: #4682b4;
+      font-style: italic;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 20px;
+      margin: 20px;
+      background: #2e8b57;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #4682b4; }
+    #readBtn {
+      margin-top: 15px;
+      background: #ff9800;
+    }
+    #readBtn:hover { background: #e67e22; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Activity Card Game</h1>
+  <button onclick="drawCard()">🎲 draw a card</button>
+  <div id="card">click the button to start!</div>
+  <button id="readBtn" onclick="readCard()">🔊 read aloud</button>
+  <div id="challenge"></div>
+
+  <script>
+    const activities = [
+      {text:"tie shoelaces", emoji:"👟"},
+      {text:"make a sandwich", emoji:"🥪"},
+      {text:"play football", emoji:"⚽"},
+      {text:"skip rope", emoji:"🤸"},
+      {text:"roller skate", emoji:"🛼"},
+      {text:"fly a kite", emoji:"🪁"},
+      {text:"play badminton", emoji:"🏸"},
+      {text:"play table tennis", emoji:"🏓"},
+      {text:"play basketball", emoji:"🏀"},
+      {text:"draw a cartoon", emoji:"✏️"},
+      {text:"paint a picture", emoji:"🎨"},
+      {text:"do ballet", emoji:"🩰"},
+      {text:"ride a bicycle", emoji:"🚲"},
+      {text:"play chess", emoji:"♟️"},
+      {text:"write an email", emoji:"💻"},
+      {text:"do laundry", emoji:"🧺"},
+      {text:"swim", emoji:"🏊"},
+      {text:"cook rice", emoji:"🍚"},
+      {text:"sing a song", emoji:"🎤"},
+      {text:"play the drums", emoji:"🥁"},
+      {text:"play the guitar", emoji:"🎸"},
+      {text:"play the flute", emoji:"🎶"},
+      {text:"do gymnastics", emoji:"🤸‍♀️"},
+      {text:"fly a drone", emoji:"🚁"},
+      {text:"build lego", emoji:"🧱"},
+      {text:"solve a puzzle", emoji:"🧩"},
+      {text:"read a book", emoji:"📖"},
+      {text:"write a story", emoji:"✍️"},
+      {text:"do gardening", emoji:"🌱"}
+    ];
+
+    let currentCard = null;
+
+    function drawCard() {
+      currentCard = activities[Math.floor(Math.random() * activities.length)];
+      document.getElementById("card").textContent = currentCard.emoji + " " + currentCard.text;
+      document.getElementById("challenge").textContent = "👉 Can you do this activity? Make a sentence with 'neither ... nor ...'.";
+    }
+
+    function readCard() {
+      if (currentCard) {
+        const utterance = new SpeechSynthesisUtterance(currentCard.text);
+        speechSynthesis.speak(utterance);
+      }
+    }
+  </script>
+</body>
+</html>
