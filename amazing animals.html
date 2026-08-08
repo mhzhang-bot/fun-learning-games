@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Beastigram Emoji Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
+    h1 { color: #2e8b57; }
+    .controls { margin: 20px; }
+    button { padding: 12px 20px; font-size: 20px; margin: 10px; }
+    #roundInfo { font-size: 24px; font-weight: bold; margin: 12px; }
+    #prompt { font-size: 22px; margin: 10px; }
+    #wordRows { margin: 24px auto; max-width: 780px; }
+    .wordBlock { margin: 16px 0; }
+    .wordRow { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .emojiCard { font-size: 44px; padding: 10px 12px; border: 2px solid #2e8b57; border-radius: 12px; background: #fff; min-width: 54px; }
+    #answer { margin: 20px; font-size: 24px; color: green; display: none; }
+  </style>
+</head>
+<body>
+  <h1>🐾 Beastigram Emoji Game</h1>
+  <div class="controls">
+    <button onclick="showAnswer()">📖 Reveal Answer</button>
+    <button onclick="nextRound()">➡️ Next Round</button>
+  </div>
+  <div id="roundInfo"></div>
+  <div id="prompt">Write the sentence in your notebook.</div>
+  <div id="wordRows"></div>
+  <div id="answer"></div>
+
+  <script>
+    const rounds = [
+      { title: "Round 1", sentence: "The lion sleeps near the river." },
+      { title: "Round 2", sentence: "A parrot sings in the garden." },
+      { title: "Round 3", sentence: "The fox runs by the hill." },
+      { title: "Round 4", sentence: "My monkey laughs in the trees." },
+      { title: "Round 5", sentence: "The rabbit hops in the field." },
+      { title: "Round 6", sentence: "A whale swims in the sea." },
+      { title: "Round 7", sentence: "The tiger roars at night." },
+      { title: "Round 8", sentence: "The zebra runs to the lake." },
+      { title: "Round 9", sentence: "The frog croaks near the pond." },
+      { title: "Round 10", sentence: "The goat eats grass by the hill." }
+    ];
+
+    const letterToEmoji = {
+      l: "🦁",
+      p: "🦜",
+      f: "🦊",
+      m: "🐒",
+      o: "🦉",
+      a: "🐜",
+      e: "🦅",
+      i: "🐞",
+      k: "🦘",
+      t: "🐅",
+      s: "🐍",
+      c: "🐆",
+      b: "🐻",
+      r: "🐇",
+      h: "🦔",
+      g: "🐐",
+      n: "🦎",
+      u: "🦄",
+      w: "🐋",
+      y: "🧊",
+      d: "🐬",
+      v: "🦅",
+      z: "🦓"
+    };
+
+    let currentRound = 0;
+
+    function getEmojiRowForWord(word) {
+      const letters = word.toLowerCase().replace(/[^a-z]/g, "");
+      const cards = letters.split("").map(letter => {
+        const emoji = letterToEmoji[letter] || "🐾";
+        return `<div class="emojiCard">${emoji}</div>`;
+      }).join("");
+      return `<div class="wordRow">${cards}</div>`;
+    }
+
+    function renderRound() {
+      const round = rounds[currentRound];
+      document.getElementById("roundInfo").textContent = `${round.title} — ${currentRound + 1} of ${rounds.length}`;
+      const words = round.sentence.split(/(\s+)/).filter(Boolean).filter(part => part.trim() !== "");
+      const wordRows = words.map(word => {
+        const cleaned = word.replace(/[^a-zA-Z]/g, "");
+        return `<div class="wordBlock">${getEmojiRowForWord(cleaned)}</div>`;
+      }).join("");
+      document.getElementById("wordRows").innerHTML = wordRows;
+      document.getElementById("answer").style.display = "none";
+      document.getElementById("answer").textContent = "";
+    }
+
+    function showAnswer() {
+      const round = rounds[currentRound];
+      document.getElementById("answer").textContent = `✅ Answer: ${round.sentence}`;
+      document.getElementById("answer").style.display = "block";
+    }
+
+    function nextRound() {
+      if (currentRound < rounds.length - 1) {
+        currentRound += 1;
+        renderRound();
+      } else {
+        document.getElementById("answer").textContent = "🎉 You finished all 10 rounds!";
+        document.getElementById("answer").style.display = "block";
+      }
+    }
+
+    renderRound();
+  </script>
+</body>
+</html>
