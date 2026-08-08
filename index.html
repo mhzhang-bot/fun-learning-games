@@ -7,30 +7,44 @@
     body { 
       font-family: Arial, sans-serif; 
       text-align: center; 
-      background: #f0f8ff; 
+      background: linear-gradient(to bottom, #f0f8ff, #fffacd); /* gradient background */
       font-size: 20px;
+      margin: 0;
+      padding: 0;
     }
     h1 { 
       color: #2e8b57; 
-      font-size: 36px;
+      font-size: 40px;
+      margin-top: 20px;
     }
-    .container {
+    p { margin-bottom: 30px; }
+
+    .row {
+      width: 100%;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
+      flex-wrap: wrap;
     }
+
     .grade-section { 
       flex: 0 0 45%;
       margin: 15px; 
       padding: 20px; 
       border: 2px solid #2e8b57; 
-      border-radius: 10px; 
+      border-radius: 12px; 
       background: #fff; 
       box-sizing: border-box;
+      box-shadow: 4px 4px 12px rgba(0,0,0,0.1); /* shadow */
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    .grade-section:hover {
+      transform: scale(1.05);
+      background-color: #f9f9f9;
     }
     .grade-section h2 { 
       color: #4682b4; 
-      font-size: 24px;
+      font-size: 26px;
+      margin-bottom: 15px;
     }
     .game-link { 
       display: block; 
@@ -43,11 +57,29 @@
     .game-link:hover { 
       color: #2e8b57; 
     }
-    .row {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
+
+    /* Color coding for grades */
+    .primary1 { background-color: #fff8dc; } /* light yellow */
+    .primary2 { background-color: #e0ffe0; } /* light green */
+    .primary3 { background-color: #ffe0f0; } /* light pink */
+    .primary4 { background-color: #e0f0ff; } /* light blue */
+    .primary5 { background-color: #f0e0ff; } /* light purple */
+    .primary6 { background-color: #fff0e0; } /* light orange */
+
+    /* Common Language Games banner */
+    .common-games {
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      border: 3px solid #ff9800;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px auto;
+      width: 80%;
+      box-shadow: 6px 6px 14px rgba(0,0,0,0.15);
+    }
+    .common-games h2 {
+      font-size: 28px;
+      color: #d35400;
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -57,74 +89,74 @@
 
   <!-- Primary 1 -->
   <div class="row">
-    <div class="grade-section">
-      <h2>小一 A (Primary 1A)</h2>
+    <div class="grade-section primary1">
+      <h2>🐣 小一 A (Primary 1A)</h2>
       <p>遊戲即將推出...</p>
     </div>
-    <div class="grade-section">
-      <h2>小一 B (Primary 1B)</h2>
+    <div class="grade-section primary1">
+      <h2>🐣 小一 B (Primary 1B)</h2>
       <p>遊戲即將推出...</p>
     </div>
   </div>
 
   <!-- Primary 2 -->
   <div class="row">
-    <div class="grade-section">
-      <h2>小二 A (Primary 2A)</h2>
+    <div class="grade-section primary2">
+      <h2>🐟 小二 A (Primary 2A)</h2>
       <p>遊戲即將推出...</p>
     </div>
-    <div class="grade-section">
-      <h2>小二 B (Primary 2B)</h2>
+    <div class="grade-section primary2">
+      <h2>🐟 小二 B (Primary 2B)</h2>
       <p>遊戲即將推出...</p>
     </div>
   </div>
 
   <!-- Primary 3 -->
   <div class="row">
-    <div class="grade-section">
-      <h2>小三 A (Primary 3A)</h2>
+    <div class="grade-section primary3">
+      <h2>🐯 小三 A (Primary 3A)</h2>
       <a href="town map.html" class="game-link">🛒 Let's go shopping</a>
     </div>
-    <div class="grade-section">
-      <h2>小三 B (Primary 3B)</h2>
+    <div class="grade-section primary3">
+      <h2>🐯 小三 B (Primary 3B)</h2>
       <p>遊戲即將推出...</p>
     </div>
   </div>
 
   <!-- Primary 4 -->
   <div class="row">
-    <div class="grade-section">
-      <h2>小四 A (Primary 4A)</h2>
+    <div class="grade-section primary4">
+      <h2>🦉 小四 A (Primary 4A)</h2>
       <a href="hobby riddles.html" class="game-link">🏊 Riddles about hobbies</a>
-      <a href="amazing animals.html" class="game-link">🐒 Amazing Animals Beastigram</a>
+      <a href="amazing animals.html" class="game-link">🦒 Amazing Animals Beastigram</a>
     </div>
-    <div class="grade-section">
-      <h2>小四 B (Primary 4B)</h2>
+    <div class="grade-section primary4">
+      <h2>🦉 小四 B (Primary 4B)</h2>
       <p>遊戲即將推出...</p>
     </div>
   </div>
 
   <!-- Primary 5 -->
   <div class="row">
-    <div class="grade-section">
-      <h2>小五 A (Primary 5A)</h2>
+    <div class="grade-section primary5">
+      <h2>🦁 小五 A (Primary 5A)</h2>
       <p>遊戲即將推出...</p>
     </div>
-    <div class="grade-section">
-      <h2>小五 B (Primary 5B)</h2>
+    <div class="grade-section primary5">
+      <h2>🦁 小五 B (Primary 5B)</h2>
       <p>遊戲即將推出...</p>
     </div>
   </div>
 
   <!-- Primary 6 -->
   <div class="row">
-    <div class="grade-section">
-      <h2>小六 A (Primary 6A)</h2>
-      <p>遊戲即將推出...</p>
+    <div class="grade-section primary6">
+      <h2>🐼 小六 A (Primary 6A)</h2>
+     <p>遊戲即將推出...</p>
     </div>
-    <div class="grade-section">
-      <h2>小六 B (Primary 6B)</h2>
-      <a href="green detective.html" class="game-link">🌱 Green Detective</a>
+    <div class="grade-section primary6">
+      <h2>🐼 小六 B (Primary 6B)</h2>
+       <a href="green detective.html" class="game-link">🌱 Green Detective</a>
       <a href="Doctor's visit.html" class="game-link">🏥 Doctor's Visit</a>
       <a href="unless jumbled sentences.html" class="game-link">📝 Jumbled Sentences (unless)</a>
       <a href="endangered animals videos.html" class="game-link">🎬 Endangered Animals</a>
@@ -135,17 +167,16 @@
       <a href="scrambed letters feelings.html" class="game-link">😆 Scrambled Letters (Feelings)</a>
       <a href="neither nor activities.html" class="game-link">♠️ Card Drawing (Neither/Nor)</a>
       <a href="feeling adj and prep.html" class="game-link">🎭 Feelings Scenario Card</a>
+      <p>遊戲即將推出...</p>
     </div>
   </div>
 
   <!-- Common Language Games -->
-  <div class="row">
-    <div class="grade-section" style="width:80%;">
-      <h2>🌍 Common Language Games</h2>
-      <a href="feelings_game.html" class="game-link">😊 Feelings Adjectives Game</a>
-      <a href="hobbies_riddle.html" class="game-link">🎲 Hobbies Riddle Game</a>
-      <a href="beastigram.html" class="game-link">🐾 Beastigram Animal Game</a>
-    </div>
+  <div class="common-games">
+    <h2>🌍 Common Language Games</h2>
+    <a href="feelings_game.html" class="game-link">😊 Feelings Adjectives Game</a>
+    <a href="hobbies_riddle.html" class="game-link">🎲 Hobbies Riddle Game</a>
+    <a href="beastigram.html" class="game-link">🐾 Beastigram Animal Game</a>
   </div>
 
 </body>
