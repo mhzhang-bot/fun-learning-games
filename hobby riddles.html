@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hobbies Riddle Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f0f8ff; }
+    h1 { color: #2e8b57; }
+    #riddleCard {
+      margin: 30px auto;
+      padding: 20px;
+      width: 500px;
+      border: 3px solid #333;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 22px;
+      min-height: 120px;
+    }
+    #answer { margin-top: 20px; font-size: 22px; color: green; display: none; }
+    button {
+      padding: 12px 20px; font-size: 20px; margin: 10px;
+      background: #2e8b57; color: #fff; border: none;
+      border-radius: 8px; cursor: pointer;
+    }
+    button:hover { background: #4682b4; }
+    #showBtn { background: #ff9800; }
+    #showBtn:hover { background: #e67e22; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Hobbies Riddle Game</h1>
+  <button onclick="drawRiddle()">🎲 Draw a Riddle</button>
+  <div id="riddleCard">Click the button to start!</div>
+  <button id="showBtn" onclick="showAnswer()">📖 Show Answer</button>
+  <div id="answer"></div>
+
+  <script>
+    const riddles = [
+      {question:"I splash in the water, I wear goggles and a cap. What hobby am I?", answer:"Swimming"},
+      {question:"I use brushes and colors, I make pictures on paper. What hobby am I?", answer:"Drawing/Painting"},
+      {question:"I climb mountains and walk in nature with a backpack. What hobby am I?", answer:"Hiking"},
+      {question:"I wear skates and roll on the ground, sometimes in the park. What hobby am I?", answer:"Roller skating"},
+      {question:"I move pieces on a board, trying to checkmate my opponent. What hobby am I?", answer:"Playing chess"},
+      {question:"I dance gracefully in a studio, wearing ballet shoes. What hobby am I?", answer:"Ballet"},
+      {question:"I use a computer or console to play with friends online. What hobby am I?", answer:"Playing online games"},
+      {question:"I open a book and read stories quietly. What hobby am I?", answer:"Reading books"},
+      {question:"I press black and white keys to make music. What hobby am I?", answer:"Playing the piano"},
+      {question:"I hold a bow and strings to play music. What hobby am I?", answer:"Playing the violin"},
+      {question:"I cook food in the kitchen with pots and pans. What hobby am I?", answer:"Cooking"},
+      {question:"I mix flour and sugar, then use the oven. What hobby am I?", answer:"Baking"},
+      {question:"I kick a ball on the field with my teammates. What hobby am I?", answer:"Playing football"},
+      {question:"I run fast on the track or in the park. What hobby am I?", answer:"Running"},
+      {question:"I bounce a ball and shoot it into a hoop. What hobby am I?", answer:"Playing basketball"}
+    ];
+
+    let currentRiddle = null;
+
+    function drawRiddle(){
+      currentRiddle = riddles[Math.floor(Math.random()*riddles.length)];
+      document.getElementById("riddleCard").textContent = currentRiddle.question;
+      document.getElementById("answer").style.display = "none";
+    }
+
+    function showAnswer(){
+      if(currentRiddle){
+        document.getElementById("answer").textContent = "✅ Answer: " + currentRiddle.answer;
+        document.getElementById("answer").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
