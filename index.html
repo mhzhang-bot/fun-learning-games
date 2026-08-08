@@ -8,19 +8,19 @@
       font-family: Arial, sans-serif; 
       text-align: center; 
       background: #f0f8ff; 
-      font-size: 20px; /* 整體字體放大 */
+      font-size: 20px;
     }
     h1 { 
       color: #2e8b57; 
-      font-size: 36px; /* 標題更大 */
+      font-size: 36px;
     }
     .container {
       display: flex;
-      flex-wrap: wrap; /* 允許換行 */
-      justify-content: center; /* 置中排列 */
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .grade-section { 
-      flex: 0 0 45%; /* 每個區塊佔一行的約一半寬度 */
+      flex: 0 0 45%;
       margin: 15px; 
       padding: 20px; 
       border: 2px solid #2e8b57; 
@@ -30,7 +30,7 @@
     }
     .grade-section h2 { 
       color: #4682b4; 
-      font-size: 24px; /* 年級標題放大 */
+      font-size: 24px;
     }
     .game-link { 
       display: block; 
@@ -38,10 +38,16 @@
       color: #000; 
       text-decoration: none; 
       font-weight: bold; 
-      font-size: 18px; /* 遊戲連結字體放大 */
+      font-size: 18px;
     }
     .game-link:hover { 
       color: #2e8b57; 
+    }
+    .row {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
     }
   </style>
 </head>
@@ -49,53 +55,97 @@
   <h1>🎮 Fun Learning Games Hub</h1>
   <p>選擇你的年級，開始遊戲吧！</p>
 
-  <div class="container">
-    <!-- 六年級遊戲區 -->
+  <!-- Primary 1 -->
+  <div class="row">
     <div class="grade-section">
-      <h2>小六 (Primary Six)</h2>
-      <a href="green detective.html" class="game-link">🌱 Green Detective</a>
-      <a href="Doctor's visit.html" class="game-link">🏥 Doctor's Visit</a>
-      <a href="unless jumbled sentences.html" class="game-link">📝 Jumbled Sentences_unless</a>
-      <a href="endangered animals videos.html" class="game-link">🎬 Endangered animals</a>
-      <a href="endangered animals riddles.html" class="game-link">❓ Riddles_Endangered animals</a>
-      <a href="passive voice sentence game.html" class="game-link">✍️ Passive voice sentence game</a>
-      <a href="first aid game.html" class="game-link">🚑 First Aid game</a>
-      <a href="other another draw it.html" class="game-link">🎨 Draw it</a>
-      <a href="scrambed letters feelings.html" class="game-link">😆 Scrambled letters feelings</a>
-      <a href="neither nor activities.html" class="game-link">♠️ Card drawing_neither nor activities</a>
-      <a href="feeling adj and prep.html" class="game-link">🎭 feelings scenario card</a>
-    </div>
-
-    <!-- 小一 -->
-    <div class="grade-section">
-      <h2>小一 (Primary One)</h2>
+      <h2>小一 A (Primary 1A)</h2>
       <p>遊戲即將推出...</p>
     </div>
-
-    <!-- 小二 -->
     <div class="grade-section">
-      <h2>小二 (Primary Two)</h2>
-      <p>遊戲即將推出...</p>
-    </div>
-
-    <!-- 小三 -->
-    <div class="grade-section">
-      <h2>小三 (Primary Three)</h2>
-      <a href="town map.html" class="game-link">🛒 Let's go shopping</a>
-    </div>
-
-    <!-- 小四 -->
-    <div class="grade-section">
-      <h2>小四 (Primary Four)</h2>
-      <p>遊戲即將推出...</p>
-      <a href="hobby riddles.html" class="game-link">🏊 Riddles about hobbies</a>
-    </div>
-
-    <!-- 小五 -->
-    <div class="grade-section">
-      <h2>小五 (Primary Five)</h2>
+      <h2>小一 B (Primary 1B)</h2>
       <p>遊戲即將推出...</p>
     </div>
   </div>
+
+  <!-- Primary 2 -->
+  <div class="row">
+    <div class="grade-section">
+      <h2>小二 A (Primary 2A)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
+    <div class="grade-section">
+      <h2>小二 B (Primary 2B)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
+  </div>
+
+  <!-- Primary 3 -->
+  <div class="row">
+    <div class="grade-section">
+      <h2>小三 A (Primary 3A)</h2>
+      <a href="town map.html" class="game-link">🛒 Let's go shopping</a>
+    </div>
+    <div class="grade-section">
+      <h2>小三 B (Primary 3B)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
+  </div>
+
+  <!-- Primary 4 -->
+  <div class="row">
+    <div class="grade-section">
+      <h2>小四 A (Primary 4A)</h2>
+      <a href="hobby riddles.html" class="game-link">🏊 Riddles about hobbies</a>
+    </div>
+    <div class="grade-section">
+      <h2>小四 B (Primary 4B)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
+  </div>
+
+  <!-- Primary 5 -->
+  <div class="row">
+    <div class="grade-section">
+      <h2>小五 A (Primary 5A)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
+    <div class="grade-section">
+      <h2>小五 B (Primary 5B)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
+  </div>
+
+  <!-- Primary 6 -->
+  <div class="row">
+    <div class="grade-section">
+      <h2>小六 A (Primary 6A)</h2>
+      <p>遊戲即將推出...</p>
+    </div>
+    <div class="grade-section">
+      <h2>小六 B (Primary 6B)</h2>
+      <a href="green detective.html" class="game-link">🌱 Green Detective</a>
+      <a href="Doctor's visit.html" class="game-link">🏥 Doctor's Visit</a>
+      <a href="unless jumbled sentences.html" class="game-link">📝 Jumbled Sentences (unless)</a>
+      <a href="endangered animals videos.html" class="game-link">🎬 Endangered Animals</a>
+      <a href="endangered animals riddles.html" class="game-link">❓ Riddles (Endangered Animals)</a>
+      <a href="passive voice sentence game.html" class="game-link">✍️ Passive Voice Sentence Game</a>
+      <a href="first aid game.html" class="game-link">🚑 First Aid Game</a>
+      <a href="other another draw it.html" class="game-link">🎨 Draw It</a>
+      <a href="scrambed letters feelings.html" class="game-link">😆 Scrambled Letters (Feelings)</a>
+      <a href="neither nor activities.html" class="game-link">♠️ Card Drawing (Neither/Nor)</a>
+      <a href="feeling adj and prep.html" class="game-link">🎭 Feelings Scenario Card</a>
+    </div>
+  </div>
+
+  <!-- Common Language Games -->
+  <div class="row">
+    <div class="grade-section" style="width:80%;">
+      <h2>🌍 Common Language Games</h2>
+      <a href="feelings_game.html" class="game-link">😊 Feelings Adjectives Game</a>
+      <a href="hobbies_riddle.html" class="game-link">🎲 Hobbies Riddle Game</a>
+      <a href="beastigram.html" class="game-link">🐾 Beastigram Animal Game</a>
+    </div>
+  </div>
+
 </body>
 </html>
